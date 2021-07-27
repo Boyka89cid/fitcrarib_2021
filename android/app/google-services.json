@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "181178240346",
+    "project_id": "fitcrarib",
+    "storage_bucket": "fitcrarib.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181178240346:android:e590bd252db1d07eeff763",
+        "android_client_info": {
+          "package_name": "com.healthaffixed.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "181178240346-5stqqipl75gnh95k0rbovedb2gl0goru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxe8NMvU82soVRjwvomGmBj33I5tYWxlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "181178240346-5stqqipl75gnh95k0rbovedb2gl0goru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

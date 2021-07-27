@@ -1,0 +1,120 @@
+name: fitcarib
+description: FitCarib
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# Read more about versioning at semver.org.
+version: 1.0.0+1             #sdk: ">=2.7.0 <3.0.0"
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.3
+  fluro: ^2.0.3 #Simple route navigation.Function handlers (map to a function instead of a route)
+  shared_preferences: ^2.0.6
+  dio: ^4.0.0 #dio: ^1.0.6 #old
+  connectivity: ^3.0.6
+  contacts_service: ^0.6.1
+  encrypt: ^5.0.0 #encrypt: ^1.0.1 #old
+  http: ^0.13.3
+  cached_network_image: ^3.1.0
+  #flutter_facebook_login: ^3.0.0
+  firebase_auth: ^3.0.1
+  firebase_database: ^7.1.2
+  dbcrypt: ^2.0.0 #dbcrypt: ^1.0.0  #old
+  firebase_core: ^1.4.0
+  firebase_storage: ^10.0.1
+  file_picker: ^3.0.3
+  sortedmap: ^0.5.1
+  path_provider: ^2.0.2
+  printing: ^5.4.3
+  pdf: ^3.4.2
+  timeago: ^3.1.0
+  firebase_messaging: ^10.0.4
+  url_launcher: ^6.0.9
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+# For information on the generic Dart part of this file, see the
+# following page: https://www.dartlang.org/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+  assets:
+     - assets/images/
+#    - assets/images/splash.png
+#    - assets/images/logo_white.png
+#    - assets/images/logo_orange.png
+#    - assets/images/otp.png
+#    - assets/images/trueicon.png
+#    - assets/images/falseicon.png
+#    - assets/images/attachment.png
+#    - assets/images/send.png
+#    - assets/images/image_icon.png
+#    - assets/images/video_icon.png
+#    - assets/images/pin_icon.png
+#    - assets/images/comment.png
+#    - assets/images/createPost.png
+#    - assets/images/delete.png
+#    - assets/images/favoritesFalse.png
+#    - assets/images/favoritesTrue.png
+#    - assets/images/friends.png
+#    - assets/images/likeFalse.png
+#    - assets/images/likeTrue.png
+#    - assets/images/menu.png
+#    - assets/images/message.png
+#    - assets/images/notification.png
+#    - assets/images/setting.png
+
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #  - images/a_dot_burr.jpeg
+  #  - images/a_dot_ham.jpeg
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.io/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.io/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: Schuyler
+      fonts:
+        - asset: assets/fonts/Schuyler.ttf
+  #      - asset: fonts/Schyler-Italic.ttf
+  #        style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.io/custom-fonts/#from-packages
