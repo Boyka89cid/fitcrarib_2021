@@ -81,16 +81,9 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                   child: new ElevatedButton(
                     child: const Text('Sign In',style: TextStyle(color: Colors.white,fontSize: 16.0),),
                     style: ElevatedButton.styleFrom(primary:Colors.tealAccent[700]
-                    ,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100.0))
-                    ),
-                    onPressed: () =>
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignInScreen(),
-                          ),
+                    ,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100.0))),
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()))
                           // ModalRoute.withName("")
-                        )
 //                          Navigator.push(context,MaterialPageRoute(builder: (context) => SignUpScreen()),)
 //                        Navigator.popUntil(context, ModalRoute.withName(MaterialPageRoute(builder: (context) => SignUpScreen())))
                     ),
@@ -186,11 +179,11 @@ class ClippingClass extends CustomClipper<Path> {
   ClippingClass(this.context);
   final context;
   @override
-  Path getClip(Size size) {
+  Path getClip(Size size)
+  {
     var path = Path();
     path.lineTo(0.0, MediaQuery.of(context).size.height/2.2);
-    path.quadraticBezierTo(
-        MediaQuery.of(context).size.width/2, MediaQuery.of(context).size.height/1.5, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height /2.2);
+    path.quadraticBezierTo(MediaQuery.of(context).size.width/2, MediaQuery.of(context).size.height/1.5, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height /2.2);
     path.lineTo(size.width, 0.0);
     path.close();
     return path;

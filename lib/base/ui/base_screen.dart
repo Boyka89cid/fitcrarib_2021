@@ -23,10 +23,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-abstract class BaseScreen extends StatefulWidget {
-  final BaseListener listener;
+abstract class BaseScreen extends StatefulWidget
+{
+  final BaseListener? listener;
   final String title;
-
   BaseScreen(this.title, this.listener, {Key? key}) : super(key: key);
 }
 
@@ -66,9 +66,9 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
 //AnimatedButtonController
   AnimationController? animationController;
 
-  BaseScreenState() {
-    animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+  BaseScreenState()
+  {
+    animationController = AnimationController(vsync: this, duration: Duration(seconds: 1));
     presenter = createPresenter();
   }
 
@@ -84,9 +84,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
 
   Widget buildBody(BuildContext context);
 
-  bool isIOS() {
-    return Theme.of(context).platform == TargetPlatform.iOS;
-  }
+  bool isIOS() {return Theme.of(context).platform == TargetPlatform.iOS;}
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +103,8 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
   void initState() {
     super.initState();
     initSharedPrefs();
-    presenter!.getName().then((name) {
+    presenter!.getName().then((name)
+    {
       print(name);
       List<String> names = name!.split(' ');
       firstName = names[0];
@@ -184,7 +183,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
   void initSharedPrefs()
   {
     Prefs? getPrefs;
-    this.prefs = getPrefs!;
+    //this.prefs = getPrefs!;
   }
 
   void _onItemTapped(int index) {
@@ -211,10 +210,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications),
-          title: Text(''),
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.notifications), title: Text(''),),
         BottomNavigationBarItem(icon: Icon(Icons.message), title: Text('')),
         BottomNavigationBarItem(icon: Text(''), title: Text('')),
         BottomNavigationBarItem(icon: Icon(Icons.people), title: Text('')),
@@ -246,7 +242,8 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
   }
 
   // ignore: missing_return
-  Future<Widget>? customDialog() {
+  Future<Widget>? customDialog()
+  {
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       sharedPreferences = sp;
       return showDialog(
@@ -313,7 +310,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
                             padding: EdgeInsets.only(left: 5.0),
                             child: GestureDetector(
                               onTap: () {
-                                print("hell");
+                                print("hello");
                               },
                               child: Tab(
                                   icon: new Image.asset(
@@ -364,7 +361,8 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
     });
   }
 
-  Widget getDrawerLayout(double screenWidth, double screenHeight) {
+  Widget getDrawerLayout(double screenWidth, double screenHeight)
+  {
     return Container(
       margin: EdgeInsets.only(right: screenWidth / 5, top: 0.0),
 //          padding: EdgeInsets.only(bottom: screenHeight/1.3),
@@ -425,7 +423,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => ActivityScreen()));
@@ -452,11 +450,8 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => ProfileScreen()));
-                  },
+              TextButton.icon(
+                  onPressed: () {Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfileScreen()));},
                   // widget.listener
                   //     .getRouter()
                   //     .navigateTo(context, '/profile', clearStack: true),
@@ -465,10 +460,8 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
                     color: Colors.white,
                     size: 35.0,
                   ),
-                  label: Text(
-                    "Profile",
-                    style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  )),
+                  label: Text("Profile", style: TextStyle(color: Colors.white, fontSize: 20.0))
+              ),
             ],
           ),
           Padding(
@@ -479,7 +472,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => NotificationsScreen()));
@@ -517,7 +510,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => MessageScreen()));
@@ -555,7 +548,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => FriendsScreen()));
@@ -582,7 +575,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => FindPeopleScreen()));
@@ -609,7 +602,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   //onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context) => GroupsScreen()));},
                   // => widget.listener
                   //     .getRouter()
@@ -633,7 +626,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => SettingsScreen()));
@@ -660,7 +653,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     //presenter!.signout();
                     presenter!.clearData();
@@ -678,7 +671,8 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
                   label: Text(
                     "Logout",
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  )),
+                  )
+              ),
             ],
           ),
           Padding(

@@ -7,7 +7,8 @@ import 'package:path/path.dart';
 
 class UploadAPI {
   static final UploadAPI _singleton = new UploadAPI._internal();
-  factory UploadAPI() {
+  factory UploadAPI()
+  {
     return _singleton;
   }
 
@@ -56,9 +57,11 @@ class UploadAPI {
           ((X509Certificate cert, String host, int port) => trustSelfSigned);
     IOClient client = new IOClient(httpClient);
 
-    try {
+    try
+    {
       return http.Response.fromStream(await client.send(request));
-    } catch (e) {
+    } catch (e)
+    {
       client.close();
       return e;
     }

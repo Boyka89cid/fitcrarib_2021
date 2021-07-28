@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fitcarib/localization_strings.dart';
 
-class Localization {
+class Localization
+{
   final Locale locale;
 
   Localization(this.locale);

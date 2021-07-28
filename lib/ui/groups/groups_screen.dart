@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:fitcarib/base/ui/base_screen.dart';
 import 'package:fitcarib/ui/groups/groups_presenter.dart';
 
-class GroupsScreen extends BaseScreen {
+class GroupsScreen extends BaseScreen
+{
   GroupsScreen(String title, listener) : super(title, listener);
 
   @override
   _GroupsScreenState createState() => _GroupsScreenState();
 }
 
-class _GroupsScreenState extends BaseScreenState<GroupsScreen, GroupsPresenter>
-    implements GroupsContract {
-  final GlobalKey<ScaffoldState> _scaffoldKeyGroupsScreen =
-      new GlobalKey<ScaffoldState>();
+class _GroupsScreenState extends BaseScreenState<GroupsScreen, GroupsPresenter> implements GroupsContract
+{
+  final GlobalKey<ScaffoldState> _scaffoldKeyGroupsScreen = new GlobalKey<ScaffoldState>();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
@@ -95,12 +96,8 @@ class _GroupsScreenState extends BaseScreenState<GroupsScreen, GroupsPresenter>
   }
 
   @override
-  Widget buildBody(BuildContext context) {
-    return Container();
-  }
+  Widget buildBody(BuildContext context) {return Container();}
 
   @override
-  GroupsPresenter createPresenter() {
-    return GroupsPresenter(this);
-  }
+  GroupsPresenter createPresenter() {return GroupsPresenter(this);}
 }

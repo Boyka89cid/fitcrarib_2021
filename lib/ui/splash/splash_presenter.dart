@@ -4,13 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-abstract class SplashContract extends BaseContract {
+abstract class SplashContract extends BaseContract
+{
   void toWelcomeScreen();
   void toActivityScreen();
 }
 
-class SplashPresenter extends BasePresenter {
+class SplashPresenter extends BasePresenter
+{
   SplashPresenter(BaseContract view) : super(view);
+
+
+
 
   void timer() async
   {

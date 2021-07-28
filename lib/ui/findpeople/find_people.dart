@@ -6,16 +6,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FindPeopleScreen extends StatefulWidget {
-  FindPeopleScreen({Key? key,
-  }) : super(
-    key: key,
-  );
+  FindPeopleScreen({Key? key,}) : super(key: key);
 
   @override
   FindPeopleScreenState createState() => FindPeopleScreenState();
 }
 
-class FindPeopleScreenState extends State<FindPeopleScreen> {
+class FindPeopleScreenState extends State<FindPeopleScreen>
+{
   final GlobalKey<ScaffoldState> _scaffoldKeyFindPeopleScreen = new GlobalKey<ScaffoldState>();
 
   String search="";
@@ -24,7 +22,7 @@ class FindPeopleScreenState extends State<FindPeopleScreen> {
 
   final myController = TextEditingController();
 
-  late SharedPreferences sharedPreferences;
+  SharedPreferences? sharedPreferences;
 
 
 
@@ -62,7 +60,8 @@ class FindPeopleScreenState extends State<FindPeopleScreen> {
                 decoration: InputDecoration(
                   contentPadding: new EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                   border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(50.0))),
-                  suffixIcon: IconButton(icon: Icon(Icons.search), onPressed: (){
+                  suffixIcon: IconButton(icon: Icon(Icons.search), onPressed: ()
+                  {
                     search = myController.text;
                     myController.text = "";
                     getPeople(search);
@@ -73,10 +72,11 @@ class FindPeopleScreenState extends State<FindPeopleScreen> {
             ),
             Padding(padding: EdgeInsets.only(top: 15.0),),
             Expanded(
-                child: foundUsers==null?Text("Find peoples"): ListView.builder
+                child: (foundUsers==null)? Text("Find peoples"): ListView.builder
                   (
                     itemCount: foundUsers.length,
-                    itemBuilder: (BuildContext context, int index) {
+                    itemBuilder: (BuildContext context, int index)
+                    {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -189,8 +189,8 @@ class FindPeopleScreenState extends State<FindPeopleScreen> {
 
     SharedPreferences.getInstance().then((SharedPreferences sp){
       sharedPreferences = sp;
-      if(sharedPreferences.get("userid") != null){
-        dynamic friendship = FitcaribReference.child("friendships").child(sharedPreferences.get("userid") as String);
+      if(sharedPreferences!.get("userid") != null){
+        dynamic friendship = FitcaribReference.child("friendships").child(sharedPreferences!.get("userid") as String);
         friendship.once().then((DataSnapshot snapshot) async{
           if(snapshot.value != null){
             Map<dynamic,dynamic> friendsMap= snapshot.value;

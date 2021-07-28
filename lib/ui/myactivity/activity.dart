@@ -73,7 +73,7 @@ class ActivityScreenState extends State<ActivityScreen> {
           ),
           actions: <Widget>[
             FlatButton.icon(
-              onPressed: null,
+              onPressed: (){},
               icon: Icon(
                 Icons.note,
                 color: Colors.orange,

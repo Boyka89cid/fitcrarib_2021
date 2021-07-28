@@ -1,19 +1,19 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Prefs {
+class Prefs
+{
   static final Prefs _singleton = new Prefs._internal();
 
   // IOClient ioClient;
 
-  factory Prefs() {
-    return _singleton;
-  }
+  factory Prefs(){return _singleton;}
 
   Prefs._internal() {
     init();
   }
 
-  Future<bool> setString(String key, String value) async {
+  Future<bool> setString(String key, String value) async
+  {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     return _prefs.setString(key, value);
   }

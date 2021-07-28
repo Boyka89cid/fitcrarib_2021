@@ -60,18 +60,19 @@ class NotificationsScreenState extends State<NotificationsScreen>{
           title: Text("Notifications", style: TextStyle(color: Colors.orange),),
           leading: FlatButton.icon(
             onPressed: () => _scaffoldKeyNotificationsScreen.currentState!.openDrawer(),
-            icon: Icon(Icons.menu, color: Colors.orange,),
+            icon: Icon(Icons.menu, color: Colors.orange),
             label: Text(""),
-            padding: EdgeInsets.only(right: 0.0, left: 24.0),),
+            padding: EdgeInsets.only(right: 0.0, left: 24.0)
+          ),
           actions: <Widget>[
-            FlatButton(onPressed: null,
-              child: Text("Clear",style: TextStyle(color: Colors.orange),),
+            FlatButton(onPressed: (){},
+              child: Text("Clear",style: TextStyle(color: Colors.orange)),
               padding: EdgeInsets.only(right: 0.0, left: 24.0),)
           ],
         ),
         floatingActionButton: CommonFloatingActionButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0,),
+        bottomNavigationBar: CommonBottomNavigationBar(selectedIndex: 0),
       ),
     );
   }

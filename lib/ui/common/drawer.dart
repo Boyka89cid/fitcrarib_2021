@@ -15,12 +15,14 @@ import 'package:fitcarib/ui/profile/profile.dart';
 //import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fitcarib/ui/welcome/welcome.dart';
 
-class CommonDrawer extends StatefulWidget {
+class CommonDrawer extends StatefulWidget
+{
   @override
   DrawerState createState() => new DrawerState();
 }
 
-class DrawerState extends State<CommonDrawer> {
+class DrawerState extends State<CommonDrawer>
+{
   SharedPreferences? sharedPreferences;
   List<dynamic> vehicleList = [];
   var name;
@@ -44,7 +46,8 @@ class DrawerState extends State<CommonDrawer> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
     return Container(
@@ -69,8 +72,10 @@ class DrawerState extends State<CommonDrawer> {
                           shape: BoxShape.circle,
                           image: new DecorationImage(
                               fit: BoxFit.fill,
-                              image: new NetworkImage(imageId ??
-                                  'https://i.stack.imgur.com/l60Hf.png')))),
+                              image: new NetworkImage(imageId ?? 'https://i.stack.imgur.com/l60Hf.png')
+                          )
+                      )
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 15.0),
@@ -108,7 +113,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -133,7 +138,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -158,7 +163,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -194,7 +199,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -207,8 +212,8 @@ class DrawerState extends State<CommonDrawer> {
                   ),
                   label: Text(
                     "Messages",
-                    style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  )),
+                    style: TextStyle(color: Colors.white, fontSize: 20.0))
+              ),
               Padding(
                 padding: EdgeInsets.only(left: screenWidth / 18),
               ),
@@ -230,7 +235,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -255,7 +260,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -269,7 +274,8 @@ class DrawerState extends State<CommonDrawer> {
                   label: Text(
                     "Find People",
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  )),
+                  )
+              ),
             ],
           ),
           Padding(
@@ -280,14 +286,11 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
-                  onPressed: () {
+              TextButton.icon(
+                  onPressed: ()
+                  {
                     BaseListener? listner;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GroupsScreen("title", listner)),
-                    );
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => GroupsScreen("title", listner)));
                   },
                   //  onPressed: () => widget.listener
                   //      .getRouter()
@@ -298,10 +301,8 @@ class DrawerState extends State<CommonDrawer> {
                     height: 35,
                     width: 35,
                   ),
-                  label: Text(
-                    "Groups",
-                    style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  )),
+                  label: Text("Groups", style: TextStyle(color: Colors.white, fontSize: 20.0))
+              ),
             ],
           ),
           Padding(
@@ -312,7 +313,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -337,7 +338,7 @@ class DrawerState extends State<CommonDrawer> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0),
               ),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: ()
                   {
                       sharedPreferences!.clear().then((_) {Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));});
@@ -371,22 +372,14 @@ class DrawerState extends State<CommonDrawer> {
           title: Center(
               child: Text(
             message,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          )),
+            style: TextStyle(fontWeight: FontWeight.bold))
+          ),
           actions: <Widget>[
             Row(
               children: <Widget>[
-                FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    "OK",
-                    style: TextStyle(
-                        color: Color(0xFF0076B5),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 15),
-                  ),
+                TextButton(
+                  onPressed: () {Navigator.pop(context);},
+                  child: Text("OK", style: TextStyle(color: Color(0xFF0076B5), fontWeight: FontWeight.w900, fontSize: 15))
                 ),
               ],
             ),

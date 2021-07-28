@@ -12,7 +12,9 @@ void main()async{
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Schuyler'),
       initialRoute: '/',
-      routes: <String, WidgetBuilder>{
-        '/': (BuildContext context) => SplashScreen(),
-      }));
+      routes: <String, WidgetBuilder>
+      {
+        '/': (BuildContext context) => SplashScreen()
+      }
+      ));
 }

@@ -19,11 +19,11 @@ class MessageScreenState extends State<MessageScreen>
 
   final fitcaribReference = FirebaseDatabase.instance.reference();
 
-  late String timeFooter;
+  String? timeFooter;
 
-  late Map<dynamic, dynamic> myMessages;
+  Map<dynamic, dynamic>? myMessages;
 
-  late SharedPreferences sharedPreferences;
+  SharedPreferences? sharedPreferences;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class MessageScreenState extends State<MessageScreen>
                 child: Text("No Messages!"),
               )
             : ListView.builder(
-                itemCount: myMessages.length,
+                itemCount: myMessages!.length,
                 itemBuilder: (BuildContext context, int index) {
                   return builtFriends(index);
                 },
@@ -91,9 +91,9 @@ class MessageScreenState extends State<MessageScreen>
     {
       sharedPreferences = sp;
 
-      if (sharedPreferences.getString("userid") != null)
+      if (sharedPreferences!.getString("userid") != null)
       {
-        dynamic friend =FirebaseDatabase.instance.reference().child("messages").child(sharedPreferences.getString("userid") as String);
+        dynamic friend =FirebaseDatabase.instance.reference().child("messages").child(sharedPreferences!.getString("userid") as String);
         friend.once().then((DataSnapshot snapshot) {
           if (snapshot.value != null) {
             setState(() {
@@ -115,9 +115,9 @@ class MessageScreenState extends State<MessageScreen>
     receiverUserDetails["profilePic"] = value["friendsPic"];
     receiverUserDetails["name"] = value["friendName"];
 
-    senderUserDetails["id"] = sharedPreferences.getString("userid");
-    senderUserDetails["profilePic"] = sharedPreferences.getString("imageId");
-    senderUserDetails["name"] = sharedPreferences.getString("name");
+    senderUserDetails["id"] = sharedPreferences!.getString("userid");
+    senderUserDetails["profilePic"] = sharedPreferences!.getString("imageId");
+    senderUserDetails["name"] = sharedPreferences!.getString("name");
 
     Navigator.push(
       context,
@@ -131,10 +131,10 @@ class MessageScreenState extends State<MessageScreen>
   }
 
   Widget builtFriends(var index) {
-    var status = myMessages.values.elementAt(index)["status"];
+    var status = myMessages!.values.elementAt(index)["status"];
 
     var receivedDatetime = DateTime.fromMillisecondsSinceEpoch(
-        myMessages.values.elementAt(index)["timestamp"]);
+        myMessages!.values.elementAt(index)["timestamp"]);
 
     var currentDatetime = DateTime.now();
     var difference = currentDatetime.difference(receivedDatetime).inMinutes;
@@ -143,9 +143,9 @@ class MessageScreenState extends State<MessageScreen>
 
     return GestureDetector(
       onTap: () {
-        toChat(myMessages.keys.elementAt(index), myMessages.values.elementAt(index));
-        print(myMessages.values.elementAt(index).toString());
-        print(myMessages.keys.elementAt(index).toString());
+        toChat(myMessages!.keys.elementAt(index), myMessages!.values.elementAt(index));
+        print(myMessages!.values.elementAt(index).toString());
+        print(myMessages!.keys.elementAt(index).toString());
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,21 +167,23 @@ class MessageScreenState extends State<MessageScreen>
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: new NetworkImage(myMessages.values
-                                      .elementAt(index)["friendsPic"])))),
+                                  image: new NetworkImage(myMessages!.values.elementAt(index)["friendsPic"])
+                              )
+                          )
+                      ),
                       Padding(
                         padding: EdgeInsets.only(left: 20.0),
                       ),
                       Expanded(
                         child: status == true
                             ? Text(
-                                "${myMessages.values.elementAt(index)["friendName"]}\n${myMessages.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages.values.elementAt(index)["message"]}",
+                                "${myMessages!.values.elementAt(index)["friendName"]}\n${myMessages!.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages!.values.elementAt(index)["message"]}",
                                 style: TextStyle(fontWeight: FontWeight.bold))
                             : Text(
-                                "${myMessages.values.elementAt(index)["friendName"]}\n${myMessages.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages.values.elementAt(index)["message"]}"),
+                                "${myMessages!.values.elementAt(index)["friendName"]}\n${myMessages!.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages!.values.elementAt(index)["message"]}"),
                       ),
                       Text(
-                        timeFooter,
+                        timeFooter!,
                         style: TextStyle(color: Colors.grey),
                       ),
                     ],

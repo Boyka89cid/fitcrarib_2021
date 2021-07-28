@@ -5,16 +5,19 @@ import 'package:fitcarib/base/ui/base_screen.dart';
 import 'package:fitcarib/ui/splash/splash_presenter.dart';
 import 'package:flutter/services.dart';
 
-class SplashScreen extends BaseScreen {
+class SplashScreen extends BaseScreen
+{
   SplashScreen(String title, listener) : super(title, listener);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends BaseScreenState<SplashScreen, SplashPresenter> implements SplashContract{
+class _SplashScreenState extends BaseScreenState<SplashScreen, SplashPresenter> implements SplashContract
+{
   @override
-  Widget buildBody(BuildContext context) {
+  Widget buildBody(BuildContext context)
+  {
     return Container(
       decoration: const BoxDecoration(
         image: const DecorationImage(
@@ -26,25 +29,26 @@ class _SplashScreenState extends BaseScreenState<SplashScreen, SplashPresenter> 
   }
 
   @override
-  SplashPresenter createPresenter() {
-    return SplashPresenter(this);
-  }
+  SplashPresenter createPresenter() {return SplashPresenter(this);}
 
   @override
-  void initState() {
+  void initState()
+  {
     presenter!.timer();
     presenter!.hideStatusBar();
   }
 
   @override
-  void toWelcomeScreen() {
+  void toWelcomeScreen()
+  {
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WelcomeScreen()));
     //widget.listener.getRouter().navigateTo(context, '/welcome',clearStack: true);
   }
 
   @override
-  void toActivityScreen() {
+  void toActivityScreen()
+  {
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ActivityScreen()));
     //widget.listener.getRouter().navigateTo(context, '/activity',clearStack: true);
