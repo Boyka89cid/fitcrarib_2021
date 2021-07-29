@@ -14,9 +14,6 @@ class SplashPresenter extends BasePresenter
 {
   SplashPresenter(BaseContract view) : super(view);
 
-
-
-
   void timer() async
   {
     SharedPreferences prefs= await  SharedPreferences.getInstance();

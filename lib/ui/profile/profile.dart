@@ -1,20 +1,19 @@
+
+import 'package:fitcarib/ui/profile/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitcarib/ui/common/common.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({Key? key,
-  }) : super(
-          key: key,
-        );
+  ProfileScreen({Key? key,}) : super(key: key,);
 
   @override
   ProfileScreenState createState() => ProfileScreenState();
 }
 
-class ProfileScreenState extends State<ProfileScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKeyProfileScreen =
-      new GlobalKey<ScaffoldState>();
+class ProfileScreenState extends State<ProfileScreen>
+{
+  final GlobalKey<ScaffoldState> _scaffoldKeyProfileScreen = new GlobalKey<ScaffoldState>();
 
   SharedPreferences? sharedPreferences;
   String? stringName;
@@ -27,8 +26,9 @@ class ProfileScreenState extends State<ProfileScreen> {
   String? lastName;
 
   @override
-  Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
+  Widget build(BuildContext context)
+  {
+    //var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
 
     return MaterialApp(
@@ -43,24 +43,27 @@ class ProfileScreenState extends State<ProfileScreen> {
             "Profile",
             style: TextStyle(color: Colors.orange),
           ),
-          leading: FlatButton.icon(
-            onPressed: () =>
-                _scaffoldKeyProfileScreen.currentState!.openDrawer(),
-            icon: Icon(
-              Icons.menu,
-              color: Colors.orange,
+          leading: Container(
+            //padding: EdgeInsets.only(right: 0.0, left: 24.0),
+            child: TextButton.icon(
+              onPressed: () => _scaffoldKeyProfileScreen.currentState!.openDrawer(),
+              icon: Icon(
+                Icons.menu,
+                color: Colors.orange,
+              ),
+              label: Text(""),
             ),
-            label: Text(""),
-            padding: EdgeInsets.only(right: 0.0, left: 24.0),
           ),
           actions: <Widget>[
-            FlatButton(
-              onPressed: null,
-              child: Text(
-                "Edit",
-                style: TextStyle(color: Colors.orange),
+            TextButton(
+              onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context)=>EditProfile()));},
+              child: Container(
+                padding: EdgeInsets.only(right: 0.0, left: 24.0),
+                child: Text(
+                  "Edit",
+                  style: TextStyle(color: Colors.orange),
+                ),
               ),
-              padding: EdgeInsets.only(right: 0.0, left: 24.0),
             ),
           ],
         ),
@@ -195,7 +198,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   bottomLeft: Radius.circular(20.0),
                 ),
               ),
-              child: FlatButton(
+              child: TextButton(
                 onPressed: () => print("hello"),
                 child: Container(
                   width: screenWidth,
@@ -284,15 +287,19 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  void initState() {
+  void initState() 
+  {
     super.initState();
-    SharedPreferences.getInstance().then((sp) {
+    SharedPreferences.getInstance().then((sp)
+    {
       sharedPreferences = sp;
       String name = sharedPreferences!.getString("name") as String;
       List<String> names = name.split(' ');
       firstName = names[0];
       lastName = names[(names.length - 1)];
-      setState(() {
+      print('$name " " $firstName " " $lastName');
+      setState(()
+      {
         stringName = name;
         stringImageId = sharedPreferences!.get("imageId") as String;
         activity = sharedPreferences!.get("activity");
