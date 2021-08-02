@@ -92,7 +92,8 @@ class ProfileScreenState extends State<ProfileScreen>
                             shape: BoxShape.circle,
                             image: new DecorationImage(
                                 fit: BoxFit.fill,
-                                image: new NetworkImage('$stringImageId'))),
+                                image: new NetworkImage('$stringImageId'))
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 20.0),

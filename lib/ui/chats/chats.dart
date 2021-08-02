@@ -11,14 +11,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ChatsScreen extends StatefulWidget{
+class ChatsScreen extends StatefulWidget
+{
   final roomId;
   final Map senderUserDetails;
   final Map receiverUserDetails;
-  ChatsScreen({Key? key,this.roomId,required this.senderUserDetails,required this.receiverUserDetails})
-      : super(
-    key: key,
-  );
+  ChatsScreen({Key? key,this.roomId,required this.senderUserDetails,required this.receiverUserDetails}) : super(key: key);
+
   @override
   ChatsScreenState createState() => ChatsScreenState(roomId,senderUserDetails,receiverUserDetails);
 }
@@ -74,47 +73,38 @@ class ChatsScreenState extends State<ChatsScreen>
                 new BoxDecoration(color: Theme.of(context).cardColor),
                 child: _buildTextComposer(),
               ),
-              Builder(builder: (BuildContext context) {
+              Builder(builder: (BuildContext context)
+              {
                 _scaffoldContext = context;
                 return new Container(width: 0.0, height: 0.0);
               })
             ],
           ),
-          decoration: Theme.of(context).platform == TargetPlatform.iOS
-              ? new BoxDecoration(
-              border: new Border(
-                  top: new BorderSide(
-                    color: Colors.grey.shade200,
-                  )))
-              : null,
+          decoration: Theme.of(context).platform == TargetPlatform.iOS ? new BoxDecoration(border: new Border(top: new BorderSide(color: Colors.grey.shade200))) : null,
         ),
       ),
     );
   }
 
-  Widget _buildTextComposer() {
+  Widget _buildTextComposer()
+  {
     return new IconTheme(
         data: new IconThemeData(
-          color: _isComposingMessage
-              ? Theme.of(context).accentColor
-              : Theme.of(context).disabledColor,
+          color: _isComposingMessage ? Theme.of(context).accentColor : Theme.of(context).disabledColor,
         ),
           child: new Row(
             children: <Widget>[
               IconButton(
-                  icon: new Icon(
-                    Icons.photo_camera,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  onPressed: () async {
+                  icon: new Icon(Icons.photo_camera, color: Theme.of(context).accentColor,),
+                  onPressed: () async
+                  {
                     File imageFile = await FilePicker.platform.pickFiles(type: FileType.image) as File; //edited
                     int timestamp = new DateTime.now().millisecondsSinceEpoch;
                     _reference = _reference.child("Chats/img_" + timestamp.toString() + ".jpg");
 
                     final uploadTask = _reference.putFile(imageFile);
 
-                    final downloadUrl =
-                    (await uploadTask.whenComplete(() => null));
+                    final downloadUrl = (await uploadTask.whenComplete(() => null));
 
                     final String url = (await downloadUrl.ref.getDownloadURL());
                     print('URL Is $url');
@@ -124,16 +114,15 @@ class ChatsScreenState extends State<ChatsScreen>
                 child: Padding(
                     child: TextField(
                       controller:  _messageController,
-                      onChanged: (String messageText) {
+                      onChanged: (String messageText)
+                      {
                         setState(() {
                           _isComposingMessage = messageText.length > 0;
                         });
                       },
                       onSubmitted: _textMessageSubmitted,
-                      decoration:
-                      new InputDecoration.collapsed(hintText: "Write your message"),
-                    ),
-                    padding: EdgeInsets.only(left: 20)
+                      decoration: InputDecoration.collapsed(hintText: "Write your message")),
+                      padding: EdgeInsets.only(left: 20)
                 ),
               ),
               new Container(
@@ -156,34 +145,35 @@ class ChatsScreenState extends State<ChatsScreen>
     sendMessage(text);
   }
 
-  CupertinoButton getIOSSendButton() {
+  CupertinoButton getIOSSendButton()
+  {
     return new CupertinoButton(
       child: new Text("Send"),
-      onPressed: _isComposingMessage
-          ? () => _textMessageSubmitted(_messageController.text)
-          : null,
+      onPressed: _isComposingMessage ? () => _textMessageSubmitted(_messageController.text) : null,
     );
   }
 
-  IconButton getDefaultSendButton() {
+  IconButton getDefaultSendButton()
+  {
     return new IconButton(
       icon: new Icon(Icons.send),
-      onPressed: _isComposingMessage
-          ? () => _textMessageSubmitted(_messageController.text)
-          : null,
+      onPressed: _isComposingMessage ? () => _textMessageSubmitted(_messageController.text) : null,
     );
   }
 
-  Widget buildListMessage(){
+  Widget buildListMessage()
+  {
     return StreamBuilder(
       stream: FirebaseDatabase.instance.reference().child("rooms").child(roomId).child("conversation").onValue,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if(snapshot.hasData){
+      builder: (BuildContext context, AsyncSnapshot snapshot)
+      {
+        if(snapshot.hasData)
+        {
           if(snapshot.data.snapshot.value != null){
             listMessage = snapshot.data.snapshot.value;
-            if(listMessage != null){
-              newMap = Map.fromEntries(listMessage!.entries.toList()..sort((e1,e2) =>
-                  (e2.value["timestamp"]).compareTo(e1.value["timestamp"])));
+            if(listMessage != null)
+            {
+              newMap = Map.fromEntries(listMessage!.entries.toList()..sort((e1,e2) => (e2.value["timestamp"]).compareTo(e1.value["timestamp"])));
             }
 
             return buildList(snapshot.data.snapshot.value);
@@ -222,7 +212,8 @@ class ChatsScreenState extends State<ChatsScreen>
     );
   }
 
-  void sendMessage(var message){
+  void sendMessage(var message)
+  {
     var timeStamp = DateTime.now().millisecondsSinceEpoch;
     data!["message"]= message;
     data!["status"] = true;
@@ -286,6 +277,7 @@ class ChatsScreenState extends State<ChatsScreen>
           context,
           MaterialPageRoute(
               builder: (context) => MessageScreen()),
+
         );
       });
     }

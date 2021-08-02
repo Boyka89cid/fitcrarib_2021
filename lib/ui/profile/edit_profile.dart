@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fitcarib/ui/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget
@@ -51,8 +56,8 @@ class EditProfileState extends State<EditProfile>
         body: SingleChildScrollView(
           //physics: ,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
+            //mainAxisAlignment: MainAxisAlignment.center,
+            //mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Form(
                   key: checkUserData,
@@ -150,7 +155,35 @@ class EditProfileState extends State<EditProfile>
                     icon: Icon(Icons.add_circle_outline_sharp,color: Colors.orange.shade600, size: 30.0),
                     label: Text('Add', style: TextStyle(fontSize: 30.0,color: Colors.orange.shade600))
                 ),
-              )
+              ),
+              Container(
+                //constraints:,
+                margin: EdgeInsets.only(top: 10.0),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0),color: Colors.black),
+                child: TextButton.icon(
+                    onPressed: () async
+                    {
+                      String? imageDownloadUrl;
+                      User? user=FirebaseAuth.instance.currentUser;
+                      String imageFileName=user!.uid.toString();
+                      final ImagePicker _picker=ImagePicker();
+                      //var imageFile=await FilePicker.platform.pickFiles(type: FileType.image) ;//?
+                      var imageXFile=await _picker.pickImage(source: ImageSource.gallery);  //?
+                      final Reference imageReference=FirebaseStorage.instance.ref().child("ProfileImage/$imageFileName.jpg");
+                      await imageReference.putFile(File(imageXFile!.path)); //imageFile
+                      imageDownloadUrl=await imageReference.getDownloadURL();
+                      SharedPreferences.getInstance().then((sp)
+                      {
+                        sharedPreferences=sp;
+                        sharedPreferences!.setString("imageId",imageDownloadUrl!);
+                        print('image Uploaded');
+                      });
+
+                    },
+                    icon: Icon(Icons.filter,color: Colors.orange.shade600, size: 30.0),
+                    label: Text('Upload Image', style: TextStyle(fontSize: 30.0,color: Colors.orange.shade600))
+                ),
+              ),
             ],
           ),
         ),

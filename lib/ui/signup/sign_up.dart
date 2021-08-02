@@ -521,9 +521,10 @@ class SignUpScreenState extends State<SignUpScreen> {
     return haveName != null;
   }
 
-  void _add(
-      dynamic obj, dynamic username, dynamic fullName, dynamic imageUrl) async {
-    Map<String, dynamic> data = <String, dynamic>{
+  void _add(dynamic obj, dynamic username, dynamic fullName, dynamic imageUrl) async
+  {
+    Map<String, dynamic> data = <String, dynamic>
+    {
       "name": fullName,
       "email": obj.email,
       "profilePic": imageUrl,
@@ -559,13 +560,15 @@ class SignUpScreenState extends State<SignUpScreen> {
         final String fileName = (user.user!.uid).toString();
         print(fileName);
         _reference = _reference.child("ProfileImage/$fileName.jpg");
-        if (user.user!.uid != null) {
+        if (user.user!.uid != null)
+        {
           String downloadUrl;
           showInSnackBar("Account Succesfully Created!\nGo to login.");
           final uploadTask = _reference.putFile(image);
           final taskSnapshot = await uploadTask.whenComplete(() => null);
           downloadUrl = await _reference.getDownloadURL();
-          if (downloadUrl != null) {
+          if (downloadUrl != null)
+          {
             _add(user.user, username, fullName, downloadUrl);
           } else {
             showInSnackBar("Unable to upload image.");
