@@ -205,9 +205,9 @@ class SignInScreenState extends State<SignInScreen> {
 
   String? _validateEmail(String? value) {
 
-    if (value?.trim()?.isEmpty ?? true) {
+    if (value?.trim().isEmpty ?? true) {
       return 'Please Enter Email Id';
-    } else if (!validateEmail(emailController?.text?.trim() as String)) {
+    } else if (!validateEmail(emailController.text.trim() as String)) {
       return 'Please Enter Valid Email Id';
     }
   }
@@ -254,7 +254,8 @@ class SignInScreenState extends State<SignInScreen> {
           "deviceToken" : token,
         };
 
-        FitcaribReference.child('tokens').child(user.user!.uid).update(data).whenComplete(() async {
+        FitcaribReference.child('tokens').child(user.user!.uid).update(data).whenComplete(() async
+        {
           dynamic root = FitcaribReference.child('users').child(user.user!.uid);
           root.once().then((DataSnapshot snapshot) async {
             Map<dynamic, dynamic> values = snapshot.value;

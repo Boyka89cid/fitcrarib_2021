@@ -167,8 +167,8 @@ class EditProfileState extends State<EditProfile>
                       User? user=FirebaseAuth.instance.currentUser;
                       String imageFileName=user!.uid.toString();
                       final ImagePicker _picker=ImagePicker();
-                      //var imageFile=await FilePicker.platform.pickFiles(type: FileType.image) ;//?
-                      var imageXFile=await _picker.pickImage(source: ImageSource.gallery);  //?
+                      //var imageFile=await FilePicker.platform.pickFiles(type: FileType.image) ;//
+                      var imageXFile=await _picker.pickImage(source: ImageSource.gallery);  //
                       final Reference imageReference=FirebaseStorage.instance.ref().child("ProfileImage/$imageFileName.jpg");
                       await imageReference.putFile(File(imageXFile!.path)); //imageFile
                       imageDownloadUrl=await imageReference.getDownloadURL();

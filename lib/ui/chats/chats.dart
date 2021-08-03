@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fitcarib/ui/messages/messages.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../../main.dart';
 
 class ChatsScreen extends StatefulWidget
 {
@@ -114,7 +119,7 @@ class ChatsScreenState extends State<ChatsScreen>
                 child: Padding(
                     child: TextField(
                       controller:  _messageController,
-                      onChanged: (String messageText)
+                      onChanged: (String messageText) async
                       {
                         setState(() {
                           _isComposingMessage = messageText.length > 0;
@@ -136,15 +141,81 @@ class ChatsScreenState extends State<ChatsScreen>
         );
   }
 
-  Future<Null> _textMessageSubmitted(String text) async {
+  Future<Null> _textMessageSubmitted(String text) async
+  {
     _messageController.clear();
 
-    setState(() {
+    setState(()
+    {
       _isComposingMessage = false;
     });
     sendMessage(text);
+    print(receiverUserDetails);
+    sendNotification(text.toString());
   }
 
+  Future sendNotification(String messageToBeNotified) async //sending notification by API
+  {
+    {
+      final postUrl = 'https://fcm.googleapis.com/fcm/send';
+      String toParams = "/topics/"+'${receiverUserDetails['id'].toString()}';
+
+      final data =
+      {
+        "notification": {"body":messageToBeNotified, "title":'${senderUserDetails['name']}'},
+        "priority": "high",
+        "data":
+        {
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+          "id": "1",
+          "status": "done",
+          "sound": 'default',
+          "screen": "yourTopicName",
+        },
+        "to": "$toParams"
+      };
+
+      final headers =
+      {
+        'content-type': 'application/json',
+        'Authorization': 'key=AAAAKi8QjVo:APA91bHUYz7PN_iCioOdT4cSaYs1cKEyzLzZOEZQx7Bd-1kV4zzP5dmSh4G-hKRPT3a5D-cnrrsjYbx6ePiGZ562WfGchWo0guTVmGnUwUrVw2fNXsuQskZm1__DPUfCOxcx66dOt4XF'
+      };
+
+      final response = await http.post(Uri.parse(postUrl),
+          body: json.encode(data),
+          encoding: Encoding.getByName('utf-8'),
+          headers: headers);
+
+      if (response.statusCode == 200)
+      {// on success do
+        print("true");
+      }
+      else
+        {// on failure do
+          print("false");
+        }
+    }
+  }
+
+  int _messageCount = 0;
+
+  /*String constructFCMPayload(String token)
+  {
+    return jsonEncode(
+        {
+      'token': token,
+      'data':
+      {
+        'via': 'FlutterFire Cloud Messaging!!!',
+        'count': _messageCount.toString(),
+      },
+      'notification':
+      {
+        'title': 'Hello FlutterFire!',
+        'body': 'This notification (#$_messageCount) was created via FCM!',
+      },
+    });
+  }*/
   CupertinoButton getIOSSendButton()
   {
     return new CupertinoButton(
@@ -242,19 +313,59 @@ class ChatsScreenState extends State<ChatsScreen>
   }
 
   @override
-  void dispose(){
+  void dispose()
+  {
     super.dispose();
   }
 
   @override
-  void initState(){
+  void initState()
+  {
     super.initState();
-    SharedPreferences.getInstance().then((SharedPreferences sp){
-      sharedPreferences = sp;
-    });
-
+    SharedPreferences.getInstance().then((SharedPreferences sp){sharedPreferences = sp;});
     print(senderUserDetails.toString());
     print(receiverUserDetails.toString());
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) //notification Recieved when app is closed.
+    {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb)
+      {
+        print('--->ooooo');
+        flutterLocalNotificationsPlugin!.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel!.id,
+                channel!.name,
+                channel!.description,
+                icon: 'launch_background',
+              ),
+            ));
+      }
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message)
+    {
+      print('A new onMessageOpenedApp event was published!');
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !kIsWeb)
+        {
+          showDialog(context: context, builder: (_)
+          {
+            return AlertDialog(title: Text(notification.title as String),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [Text(notification.body as String)],
+              ),
+            ),);
+          });
+        }
+    });
 
     data = <String,dynamic>{
       "roomId" : roomId
@@ -270,8 +381,10 @@ class ChatsScreenState extends State<ChatsScreen>
     });
   }
 
-  void toMessageScreen() {
-    if(alreadyGotData){
+  void toMessageScreen()
+  {
+    if(alreadyGotData)
+    {
       firebaseReference.child("messages").child(senderUserDetails["id"]).child(receiverUserDetails["id"]).child("status").set(false).then((_){
         Navigator.push(
           context,
@@ -289,7 +402,8 @@ class ChatsScreenState extends State<ChatsScreen>
       );
     }
   }
-  Future<bool> onBackPress() {
+  Future<bool> onBackPress()
+  {
     Navigator.pop(context);
     return Future.value(false);
   }

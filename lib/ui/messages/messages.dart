@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -105,11 +106,14 @@ class MessageScreenState extends State<MessageScreen>
     });
   }
 
-  void toChat(var id, var value){
+  void toChat(var id, var value) async
+  {
 
     Map<dynamic,dynamic> senderUserDetails = Map();
     Map<dynamic,dynamic> receiverUserDetails = Map();
     var roomId = value["roomId"];
+
+    await FirebaseMessaging.instance.subscribeToTopic(senderUserDetails["id"].toString()).then((value){print('-->Subscribed');});
 
     receiverUserDetails["id"] = id;
     receiverUserDetails["profilePic"] = value["friendsPic"];
