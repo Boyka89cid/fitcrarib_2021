@@ -26,7 +26,8 @@ const List<String> tabNames = const <String>[
 
 class _ActivityScreenState
     extends BaseScreenState<ActivitySecondScreen, ActivityPresenter>
-    implements ActivityContract {
+    implements ActivityContract
+{
   final GlobalKey<ScaffoldState> _scaffoldKeyActivitySecondScreen = new GlobalKey<ScaffoldState>();
   List<ActivityModel> myPost = [];
   List<ActivityModel> myFavPost = [];
@@ -41,7 +42,8 @@ class _ActivityScreenState
   String? timeFooter;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
@@ -150,7 +152,8 @@ class _ActivityScreenState
     return ActivityPresenter(this);
   }
 
-  Widget builtItem(int index) {
+  Widget builtItem(int index)
+  {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
     if (index == 0) {
@@ -281,12 +284,14 @@ class _ActivityScreenState
       );
     }
     else {
-      if (myPost == null) {
+      if (myPost == null)
+      {
         return Center(
           child: CircularProgressIndicator(),
         );
       }
-      else {
+      else
+        {
         return ListView.builder(
           padding: EdgeInsets.only(left: 10.0, right: 10.0),
           itemCount: myPost.length,
@@ -312,7 +317,7 @@ class _ActivityScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "${myPost[index].userName}",
+                            "Kusss ${myPost[index].userName}",
                             style: TextStyle(
                                 color: Colors.black87, fontSize: 17.0),
                           ),
@@ -341,7 +346,7 @@ class _ActivityScreenState
                   ],
                 ),
                 myPost[index].imageUrl == "none"
-                    ? Text("")
+                    ? Text("WHY?")
                     : Padding(
                         padding: EdgeInsets.only(top: 10.0),
                         child: Container(

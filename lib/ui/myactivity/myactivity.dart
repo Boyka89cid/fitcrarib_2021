@@ -104,7 +104,8 @@ class MyActivityScreenState extends State<MyActivityScreen> {
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     var screenWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
         onWillPop: () => Future.value(false),

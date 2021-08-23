@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -18,10 +17,11 @@ import '../../main.dart';
 
 class ChatsScreen extends StatefulWidget
 {
+  ChatsScreen({Key? key,this.roomId,required this.senderUserDetails,required this.receiverUserDetails}) : super(key: key);
+
   final roomId;
   final Map senderUserDetails;
   final Map receiverUserDetails;
-  ChatsScreen({Key? key,this.roomId,required this.senderUserDetails,required this.receiverUserDetails}) : super(key: key);
 
   @override
   ChatsScreenState createState() => ChatsScreenState(roomId,senderUserDetails,receiverUserDetails);
@@ -29,10 +29,12 @@ class ChatsScreen extends StatefulWidget
 
 class ChatsScreenState extends State<ChatsScreen>
 {
+  ChatsScreenState(this.roomId,this.senderUserDetails,this.receiverUserDetails);
+
   late var roomId;
   late var senderUserDetails;
   late var receiverUserDetails;
-  ChatsScreenState(this.roomId,this.senderUserDetails,this.receiverUserDetails);
+
   final GlobalKey<ScaffoldState> _scaffoldKeyChatsScreen = new GlobalKey<ScaffoldState>();
   final postUrl = 'https://fcm.googleapis.com/fcm/send';
   Reference _reference = FirebaseStorage.instance.ref();
@@ -50,9 +52,11 @@ class ChatsScreenState extends State<ChatsScreen>
   Map<dynamic,dynamic>? allMessages;
 
   SharedPreferences? sharedPreferences;
+  String? keyToNotification;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -74,8 +78,7 @@ class ChatsScreenState extends State<ChatsScreen>
               ),
               Divider(height: 1.0),
               Container(
-                decoration:
-                new BoxDecoration(color: Theme.of(context).cardColor),
+                decoration: BoxDecoration(color: Theme.of(context).cardColor),
                 child: _buildTextComposer(),
               ),
               Builder(builder: (BuildContext context)
@@ -94,51 +97,51 @@ class ChatsScreenState extends State<ChatsScreen>
   Widget _buildTextComposer()
   {
     return new IconTheme(
-        data: new IconThemeData(
-          color: _isComposingMessage ? Theme.of(context).accentColor : Theme.of(context).disabledColor,
-        ),
-          child: new Row(
-            children: <Widget>[
-              IconButton(
-                  icon: new Icon(Icons.photo_camera, color: Theme.of(context).accentColor,),
-                  onPressed: () async
-                  {
-                    File imageFile = await FilePicker.platform.pickFiles(type: FileType.image) as File; //edited
-                    int timestamp = new DateTime.now().millisecondsSinceEpoch;
-                    _reference = _reference.child("Chats/img_" + timestamp.toString() + ".jpg");
+      data: new IconThemeData(
+        color: _isComposingMessage ? Theme.of(context).accentColor : Theme.of(context).disabledColor,
+      ),
+      child: Row(
+        children: <Widget>[
+          IconButton(
+              icon: new Icon(Icons.photo_camera, color: Theme.of(context).accentColor,),
+              onPressed: () async
+              {
+                File imageFile = await FilePicker.platform.pickFiles(type: FileType.image) as File; //edited
+                int timestamp = new DateTime.now().millisecondsSinceEpoch;
+                _reference = _reference.child("Chats/img_" + timestamp.toString() + ".jpg");
 
-                    final uploadTask = _reference.putFile(imageFile);
+                final uploadTask = _reference.putFile(imageFile);
 
-                    final downloadUrl = (await uploadTask.whenComplete(() => null));
+                final downloadUrl = (await uploadTask.whenComplete(() => null));
 
-                    final String url = (await downloadUrl.ref.getDownloadURL());
-                    print('URL Is $url');
-                    sendMessage(url);
-                  }),
-              Flexible(
-                child: Padding(
-                    child: TextField(
-                      controller:  _messageController,
-                      onChanged: (String messageText) async
-                      {
-                        setState(() {
-                          _isComposingMessage = messageText.length > 0;
-                        });
-                      },
-                      onSubmitted: _textMessageSubmitted,
-                      decoration: InputDecoration.collapsed(hintText: "Write your message")),
-                      padding: EdgeInsets.only(left: 20)
-                ),
-              ),
-              new Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Theme.of(context).platform == TargetPlatform.iOS
-                    ? getIOSSendButton()
-                    : getDefaultSendButton(),
-              ),
-            ],
+                final String url = (await downloadUrl.ref.getDownloadURL());
+                print('URL Is $url');
+                sendMessage(url);
+              }),
+          Flexible(
+            child: Padding(
+                child: TextField(
+                    controller:  _messageController,
+                    onChanged: (String messageText) async
+                    {
+                      setState(() {
+                        _isComposingMessage = messageText.length > 0;
+                      });
+                    },
+                    onSubmitted: _textMessageSubmitted,
+                    decoration: InputDecoration.collapsed(hintText: "Write your message")),
+                padding: EdgeInsets.only(left: 20)
+            ),
           ),
-        );
+          new Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: Theme.of(context).platform == TargetPlatform.iOS
+                ? getIOSSendButton()
+                : getDefaultSendButton(),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<Null> _textMessageSubmitted(String text) async
@@ -154,11 +157,20 @@ class ChatsScreenState extends State<ChatsScreen>
     sendNotification(text.toString());
   }
 
-  Future sendNotification(String messageToBeNotified) async //sending notification by API
+  String reverse(String string)
   {
+    if (string.length < 2)
+      return string;
+
+    final characters = Characters(string);
+    return characters.toList().reversed.join();
+  }
+
+  Future sendNotification(String messageToBeNotified) async //sending notification by API
+      {
     {
       final postUrl = 'https://fcm.googleapis.com/fcm/send';
-      String toParams = "/topics/"+'${receiverUserDetails['id'].toString()}';
+      String toParams = "/topics/"+'$keyToNotification';
 
       final data =
       {
@@ -191,13 +203,13 @@ class ChatsScreenState extends State<ChatsScreen>
         print("true");
       }
       else
-        {// on failure do
-          print("false");
-        }
+      {// on failure do
+        print("false");
+      }
     }
   }
 
-  int _messageCount = 0;
+  //int _messageCount = 0;
 
   /*String constructFCMPayload(String token)
   {
@@ -266,14 +278,16 @@ class ChatsScreenState extends State<ChatsScreen>
     );
   }
 
-  Widget buildItem(int index, var gotList){
+  Widget buildItem(int index, var gotList)
+  {
     String mes = gotList["message"];
-    return gotList["senderId"] == senderUserDetails["id"] ? Padding(
-      padding: EdgeInsets.only(bottom: 5.0),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: mes.contains(".jpg") == true ? Image.network(gotList["message"], width: 250.0,) :  Text("${gotList["message"].toString()}"),
-      ),
+    return gotList["senderId"] == senderUserDetails["id"] ? Padding
+      (
+        padding: EdgeInsets.only(bottom: 5.0),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: mes.contains(".jpg") == true ? Image.network(gotList["message"], width: 250.0,) :  Text("${gotList["message"].toString()}"),
+        ),
     ) : Padding(
       padding: EdgeInsets.only(bottom: 5.0),
       child: Align(
@@ -290,6 +304,7 @@ class ChatsScreenState extends State<ChatsScreen>
     data!["status"] = true;
     data!["timestamp"] = timeStamp;
     data!["friendName"] = senderUserDetails["name"];
+
     data!["friendsPic"] = senderUserDetails["profilePic"];
     Map<String,dynamic> conversationData = <String,dynamic>{
       "senderId" : senderUserDetails["id"],
@@ -309,6 +324,7 @@ class ChatsScreenState extends State<ChatsScreen>
         _messageController.text ="";
         alreadyGotData = true;
       });
+      print('-----))))--- ${keyToNotification.toString()}');
     });
   }
 
@@ -326,7 +342,7 @@ class ChatsScreenState extends State<ChatsScreen>
     print(senderUserDetails.toString());
     print(receiverUserDetails.toString());
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) //notification Recieved when app is closed.
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) //notification Received when app is closed.
     {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -353,33 +369,40 @@ class ChatsScreenState extends State<ChatsScreen>
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb)
+      {
+        showDialog(context: context, builder: (_)
         {
-          showDialog(context: context, builder: (_)
-          {
-            return AlertDialog(title: Text(notification.title as String),
+          return AlertDialog(title: Text(notification.title as String),
             content: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [Text(notification.body as String)],
               ),
             ),);
-          });
-        }
-    });
-
-    data = <String,dynamic>{
-      "roomId" : roomId
-    };
-
-    firebaseReference.child("rooms").child(roomId).once().then((DataSnapshot data){
-      if(data.value != null){
-        firebaseReference.child("messages").child(senderUserDetails["id"]).child(receiverUserDetails["id"]).child("status").set(false);
-        setState(() {
-          alreadyGotData = true;
         });
       }
     });
+
+    data = <String,dynamic>
+    {
+      "roomId" : roomId
+    };
+
+    firebaseReference.child("rooms").child(roomId).once().then((DataSnapshot data)
+    {
+      if(data.value != null)
+      {
+        firebaseReference.child("messages").child(senderUserDetails["id"]).child(receiverUserDetails["id"]).child("status").set(false);
+        setState(() {alreadyGotData = true;});
+      }
+    });
+    firebaseReference.child("notifications").child(senderUserDetails["id"]).child(receiverUserDetails["id"]).once().then((DataSnapshot dataSnapshot)
+    {
+      Map<dynamic,dynamic> mapToNotification=dataSnapshot.value;
+      keyToNotification=mapToNotification['notificationKeyOfUser'] as String?;
+    });
   }
+
 
   void toMessageScreen()
   {

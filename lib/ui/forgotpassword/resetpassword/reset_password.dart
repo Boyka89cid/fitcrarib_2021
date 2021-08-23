@@ -21,7 +21,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.dispose();
   }
 
-  void sendOTP(var email) async {
+  void sendOTP(var email) async
+  {
     await resetPassword(email);
   }
 
@@ -165,7 +166,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (value?.trim()?.isEmpty ?? true)
     {
       return 'Please Enter Email Address';
-    } else if (!validateEmail(emailController?.text.trim() as String))
+    } else if (!validateEmail(emailController.text.trim() as String))
     {
       return 'Please Enter Valid Email Address';
     }

@@ -9,10 +9,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fitcarib/ui/signin/sign_in.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKeySignUpScreen =
-    new GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> _scaffoldKeySignUpScreen = GlobalKey<ScaffoldState>();
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -100,7 +100,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                 child: TextFormField(
                   style: TextStyle(color: Colors.black),
                   validator: (value) {
-                    if (value?.trim()?.isEmpty ?? true) {
+                    if (value?.trim().isEmpty ?? true) {
                       return 'Please Enter First Name';
                     }
                     return null;
@@ -123,7 +123,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                 child: TextFormField(
                   style: TextStyle(color: Colors.black),
                   validator: (value) {
-                    if (value?.trim()?.isEmpty ?? true) {
+                    if (value?.trim().isEmpty ?? true) {
                       return 'Please Enter Last Name';
                     }
                     return null;
@@ -147,7 +147,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                   controller: usernameController,
                   // ignore: missing_return
                   validator: (value) {
-                    if (value?.trim()?.isEmpty ?? true) {
+                    if (value?.trim().isEmpty ?? true) {
                       // errorColor = Colors.red;
                       // setState(() {});
                       return "Enter UserName";
@@ -379,17 +379,20 @@ class SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future getImage() async {
-    var tempImage = await FilePicker.platform.pickFiles(type: FileType.image) as File;
+  Future getImage() async
+  {
+    final ImagePicker _picker=ImagePicker();
+    var imageXFile=await _picker.pickImage(source: ImageSource.gallery);
+    //var tempImage = await FilePicker.platform.pickFiles(type: FileType.image);
     setState(() {
-      file = tempImage;
+      file = File(imageXFile!.path);
     });
   }
 
   String? _validateEmail(String? value) {
-    if (value?.trim()?.isEmpty ?? true) {
+    if (value?.trim().isEmpty ?? true) {
       return 'Please Enter Email Address';
-    } else if (!validateEmail(emailController?.text?.trim() as String)) {
+    } else if (!validateEmail(emailController.text.trim())) {
       return 'Please Enter Valid Email Address';
     }
     // if (value.isEmpty) {
@@ -430,10 +433,10 @@ class SignUpScreenState extends State<SignUpScreen> {
 
   String? _validatePassword(String? value)
   {
-    if (value?.trim()?.isEmpty ?? true) {
+    if (value?.trim().isEmpty ?? true) {
       choosePasswordController.clear();
       return 'Please Enter Password';
-    } else if (!validatePassword(choosePasswordController?.text?.trim() as String)) {
+    } else if (!validatePassword(choosePasswordController.text.trim())) {
       showDialog(
         context: context,
           builder: (BuildContext context) =>  AlertDialog(
@@ -461,11 +464,11 @@ class SignUpScreenState extends State<SignUpScreen> {
   }
 
   String? _validateConfirmPassword(String? value) {
-    if (value?.trim()?.isEmpty ?? true) {
+    if (value?.trim().isEmpty ?? true) {
       confirmPasswordController.clear();
       return 'Please Confirm Password';
-    } else if (confirmPasswordController?.text !=
-        choosePasswordController?.text) {
+    } else if (confirmPasswordController.text !=
+        choosePasswordController.text) {
       return 'Confirm Password Did Not Match';
     }
     //

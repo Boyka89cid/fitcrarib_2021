@@ -38,13 +38,14 @@ void main()async
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true,badge: true,sound: true);
 
     }
-  runApp(new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Schuyler'),
-      initialRoute: '/',
-      routes: <String, WidgetBuilder>
-      {
-        '/': (BuildContext context) => SplashScreen()
-      }
-      ));
+  runApp(
+      MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(fontFamily: 'Schuyler'),
+          initialRoute: '/',
+          routes: <String, WidgetBuilder>
+          {
+            '/': (BuildContext context) => SplashScreen()
+          }
+        ));
 }

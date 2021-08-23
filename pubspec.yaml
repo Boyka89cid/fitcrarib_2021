@@ -46,6 +46,7 @@ dependencies:
   url_launcher: ^6.0.9
   image_picker: ^0.8.2
   flutter_local_notifications: ^8.0.0
+  flutter_easyloading: ^3.0.0
   #onesignal_flutter: ^3.1.0
 
 dev_dependencies:
@@ -69,8 +70,8 @@ flutter:
 #    - assets/images/logo_white.png
 #    - assets/images/logo_orange.png
 #    - assets/images/otp.png
-#    - assets/images/trueicon.png
-#    - assets/images/falseicon.png
+#    - assets/images/trueIcon.png
+#    - assets/images/falseIcon.png
 #    - assets/images/attachment.png
 #    - assets/images/send.png
 #    - assets/images/image_icon.png

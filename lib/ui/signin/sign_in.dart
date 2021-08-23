@@ -11,17 +11,20 @@ import 'package:fitcarib/ui/forgotpassword/forgot_password.dart';
 import 'package:flutter/gestures.dart';
 import 'package:fitcarib/ui/signup/sign_up.dart';
 
-final GlobalKey<ScaffoldState> _scaffoldKeySignInScreen = new GlobalKey<ScaffoldState>();
+//final GlobalKey<ScaffoldState> _scaffoldKeySignInScreen = new GlobalKey<ScaffoldState>();
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends StatefulWidget
+{
   @override
   SignInScreenState createState() => SignInScreenState();
 }
 
-class SignInScreenState extends State<SignInScreen> {
+class SignInScreenState extends State<SignInScreen>
+{
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   SharedPreferences? prefs;
@@ -33,9 +36,7 @@ class SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((SharedPreferences sp) {
-      prefs = sp;
-    });
+    SharedPreferences.getInstance().then((SharedPreferences sp) {prefs = sp;});
   }
 
   @override
@@ -44,13 +45,14 @@ class SignInScreenState extends State<SignInScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
     return Form(
       key: _formKey,
       child: Scaffold(
-        key: _scaffoldKeySignInScreen,
+        //key: _scaffoldKeySignInScreen,
         body: ListView(
           children: <Widget>[
             Padding(padding: EdgeInsets.only(top: 10.0)),
@@ -149,7 +151,7 @@ class SignInScreenState extends State<SignInScreen> {
                 child: ButtonTheme(
                   minWidth: 280,
                   height: 60.0,
-                  child: new RaisedButton(
+                  child: RaisedButton(
                     child: const Text(
                       'Sign In',
                       style: TextStyle(color: Colors.white, fontSize: 20.0),
@@ -226,7 +228,7 @@ class SignInScreenState extends State<SignInScreen> {
   }
   String? _validatePassword(String? value)
   {
-    if (value?.trim()?.isEmpty ?? true)
+    if (value?.trim().isEmpty ?? true)
     {
       passwordController.clear();
       return 'Please Enter Password';
@@ -239,28 +241,32 @@ class SignInScreenState extends State<SignInScreen> {
     return regExp.hasMatch(value);
   }
 
-  void showInSnackBar(String value) {
-    _scaffoldKeySignInScreen.currentState!.showSnackBar(new SnackBar(content: new Text(value),duration: Duration(seconds: 2),));
+  void showInSnackBar(String value)
+  {
+    ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(value),duration: Duration(seconds: 2)));
+    //_scaffoldKeySignInScreen.currentState!.showSnackBar(new SnackBar(content: new Text(value),duration: Duration(seconds: 2),));
   }
 
 
   Future<void> signIn(String email, String password) async {
-
-
-    _firebaseAuth.signInWithEmailAndPassword(email: email, password: password).then((user) async {
+    _firebaseAuth.signInWithEmailAndPassword(email: email, password: password).then((user) async
+    {
       prefs!.setString("userid", user.user!.uid);
       _firebaseMessaging.getToken().then((token){
-        Map<String, dynamic> data = <String,dynamic>{
+        Map<String, dynamic> data = <String,dynamic>
+        {
           "deviceToken" : token,
         };
 
         FitcaribReference.child('tokens').child(user.user!.uid).update(data).whenComplete(() async
         {
           dynamic root = FitcaribReference.child('users').child(user.user!.uid);
-          root.once().then((DataSnapshot snapshot) async {
+          root.once().then((DataSnapshot snapshot) async
+          {
             Map<dynamic, dynamic> values = snapshot.value;
 
-            values.forEach((k,v){
+            values.forEach((k,v)
+            {
               if(k == "name")
                 prefs!.setString("name", v);
               if(k == "email")
@@ -278,7 +284,10 @@ class SignInScreenState extends State<SignInScreen> {
               if(k == "profilePic")
                 prefs!.setString("imageId", v);
             });
-            if(values != null){
+            if(values != null)
+            {
+              print('Testing12344');
+              print(values.toString());
               Navigator.push(context,MaterialPageRoute(builder: (context) => ActivityScreen()),);
             }
 
@@ -289,7 +298,8 @@ class SignInScreenState extends State<SignInScreen> {
     }).catchError((error){
       //PlatformException exception = error;
       print("err "+error.toString());
-      if(error.code == "wrong-password"){
+      if(error.code == "wrong-password")
+      {
         showInSnackBar("Email Id or Password is incorrect.");
       }
       else{

@@ -1,4 +1,4 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -26,8 +26,13 @@ class MessageScreenState extends State<MessageScreen>
 
   SharedPreferences? sharedPreferences;
 
+  List<String> friendsImagesURL=[];
+  String? requireFriendKey;
+  bool downloaded=false;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -66,16 +71,12 @@ class MessageScreenState extends State<MessageScreen>
             )
           ],
         ),
-        body: myMessages == null
-            ? Center(
-                child: Text("No Messages!"),
-              )
+        body: myMessages == null ?
+            Center(child: Text("No Messages!"))
             : ListView.builder(
-                itemCount: myMessages!.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return builtFriends(index);
-                },
-              ),
+          itemCount: myMessages!.length,
+          itemBuilder: (BuildContext context, int index) {return builtFriends(index);},
+        ),
         floatingActionButton: CommonFloatingActionButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: CommonBottomNavigationBar(
@@ -86,7 +87,8 @@ class MessageScreenState extends State<MessageScreen>
   }
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     SharedPreferences.getInstance().then((SharedPreferences sp)
     {
@@ -95,16 +97,15 @@ class MessageScreenState extends State<MessageScreen>
       if (sharedPreferences!.getString("userid") != null)
       {
         dynamic friend =FirebaseDatabase.instance.reference().child("messages").child(sharedPreferences!.getString("userid") as String);
-        friend.once().then((DataSnapshot snapshot) {
-          if (snapshot.value != null) {
-            setState(() {
-              myMessages = snapshot.value;
-            });
-          }
+        friend.once().then((DataSnapshot snapshot)
+        {
+          if (snapshot.value != null)
+            setState(() {myMessages = snapshot.value;});
         });
       }
     });
   }
+
 
   void toChat(var id, var value) async
   {
@@ -112,8 +113,6 @@ class MessageScreenState extends State<MessageScreen>
     Map<dynamic,dynamic> senderUserDetails = Map();
     Map<dynamic,dynamic> receiverUserDetails = Map();
     var roomId = value["roomId"];
-
-    await FirebaseMessaging.instance.subscribeToTopic(senderUserDetails["id"].toString()).then((value){print('-->Subscribed');});
 
     receiverUserDetails["id"] = id;
     receiverUserDetails["profilePic"] = value["friendsPic"];
@@ -123,6 +122,8 @@ class MessageScreenState extends State<MessageScreen>
     senderUserDetails["profilePic"] = sharedPreferences!.getString("imageId");
     senderUserDetails["name"] = sharedPreferences!.getString("name");
 
+    //await FirebaseMessaging.instance.subscribeToTopic(senderUserDetails["id"].toString()).then((value){print('-->Subscribed');});
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -130,11 +131,14 @@ class MessageScreenState extends State<MessageScreen>
             roomId: roomId,
             receiverUserDetails: receiverUserDetails,
             senderUserDetails: senderUserDetails,
-          )),
+          )
+      )
+      ,
     );
   }
 
-  Widget builtFriends(var index) {
+  Widget builtFriends(var index)
+  {
     var status = myMessages!.values.elementAt(index)["status"];
 
     var receivedDatetime = DateTime.fromMillisecondsSinceEpoch(
@@ -146,7 +150,8 @@ class MessageScreenState extends State<MessageScreen>
     timeFooter = timeago.format(ago);
 
     return GestureDetector(
-      onTap: () {
+      onTap: ()
+      {
         toChat(myMessages!.keys.elementAt(index), myMessages!.values.elementAt(index));
         print(myMessages!.values.elementAt(index).toString());
         print(myMessages!.keys.elementAt(index).toString());
@@ -171,7 +176,7 @@ class MessageScreenState extends State<MessageScreen>
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: new NetworkImage(myMessages!.values.elementAt(index)["friendsPic"])
+                                  image: NetworkImage('${myMessages!.values.elementAt(index)['friendsPic'].toString()}')
                               )
                           )
                       ),
@@ -181,10 +186,10 @@ class MessageScreenState extends State<MessageScreen>
                       Expanded(
                         child: status == true
                             ? Text(
-                                "${myMessages!.values.elementAt(index)["friendName"]}\n${myMessages!.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages!.values.elementAt(index)["message"]}",
-                                style: TextStyle(fontWeight: FontWeight.bold))
+                            "${myMessages!.values.elementAt(index)["friendName"]}\n${myMessages!.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages!.values.elementAt(index)["message"]}",
+                            style: TextStyle(fontWeight: FontWeight.bold))
                             : Text(
-                                "${myMessages!.values.elementAt(index)["friendName"]}\n${myMessages!.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages!.values.elementAt(index)["message"]}"),
+                            "${myMessages!.values.elementAt(index)["friendName"]}\n${myMessages!.values.elementAt(index)["message"].contains(".jpg") == true ? "Sent An Attachment" : myMessages!.values.elementAt(index)["message"]}"),
                       ),
                       Text(
                         timeFooter!,
@@ -205,5 +210,27 @@ class MessageScreenState extends State<MessageScreen>
         ],
       ),
     );
+  }
+  Future<String?> downloadUpdatedImageByFriend(var friendId) async
+  {
+    String? imageDownloadUrl;
+    print(friendId);
+    final Reference imageReference=FirebaseStorage.instance.ref().child("ProfileImage/${friendId.toString()}.jpg");
+    imageDownloadUrl=await imageReference.getDownloadURL().then((value)
+    {
+      //friendsImagesURL[0]=imageDownloadUrl;
+      print(imageDownloadUrl);
+      setState(()
+      {
+        downloaded=true;
+      });
+      // SharedPreferences.getInstance().then((sp)
+      // {
+      //   sharedPreferences=sp;
+      //   sharedPreferences!.setString('imageId', imageDownloadUrl!);
+      //   print('image Uploaded');
+      // });
+    });
+    return imageDownloadUrl;
   }
 }

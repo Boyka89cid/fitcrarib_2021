@@ -16,12 +16,15 @@ class SplashPresenter extends BasePresenter
 
   void timer() async
   {
-    SharedPreferences prefs= await  SharedPreferences.getInstance();
-    Timer(Duration(milliseconds: 3000),(){
-      if(prefs.getString("name") == null || prefs.getString("imageId") == null){
+    SharedPreferences prefs= await SharedPreferences.getInstance();
+    Timer(Duration(milliseconds: 3000),()
+    {
+      if(prefs.getString("name") == null || prefs.getString("imageId") == null)
+      {
         (view as SplashContract).toWelcomeScreen();
       }
-      else{
+      else
+        {
         (view as SplashContract).toActivityScreen();
       }
     });

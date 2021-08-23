@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:core';
 import 'package:file_picker/file_picker.dart';
-import 'package:fitcarib/constants.dart';
 import 'package:fitcarib/ui/findpeople/find_people.dart';
 import 'package:fitcarib/ui/friends/friends.dart';
-//import 'package:fitcarib/ui/groups/groups_presenter.dart';
-//import 'package:fitcarib/ui/groups/groups_screen.dart';
 import 'package:fitcarib/ui/messages/messages.dart';
 import 'package:fitcarib/ui/myactivity/activity.dart';
 import 'package:fitcarib/ui/notifications/notifications.dart';
@@ -18,11 +16,11 @@ import 'package:fitcarib/base/presenter/base_presenter.dart';
 import 'package:fitcarib/base/ui/base_listener.dart';
 import 'package:fitcarib/utils/prefs.dart';
 import 'package:fitcarib/server/models/login_request.dart';
-import 'dart:core';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+//Description such as purpose of fee,Letter number/Roll number/class number etc.
 abstract class BaseScreen extends StatefulWidget
 {
   final BaseListener? listener;
@@ -33,7 +31,7 @@ abstract class BaseScreen extends StatefulWidget
 abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> extends State<T> with TickerProviderStateMixin implements BaseContract
 {
   SharedPreferences? sharedPreferences;
-  final FitcaribReference = FirebaseDatabase.instance.reference();
+  final fitcaribReference = FirebaseDatabase.instance.reference();
   Reference _reference = FirebaseStorage.instance.ref();
 
   final _messageController = TextEditingController();
@@ -45,7 +43,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
   File? file; //edited
   String? downloadUrl;
 
-  var scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   Prefs? prefs;
   double? screenHeight;
   double? screenWidth;
@@ -171,10 +169,13 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
     presenter!.dispose();
   }
 
-  Future getImage() async {
+  Future getImage() async
+  {
     FilePickerResult? tempImage = await FilePicker.platform.pickFiles(type: FileType.image);//edited.
-    setState(() {
-      file = tempImage as File; //edited.
+    setState(()
+    {
+      file = File(tempImage!.files.single.path!); //edited.
+      stringImageId=tempImage.files.single.path!;
     });
   }
 
@@ -385,7 +386,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
                           shape: BoxShape.circle,
                           image: new DecorationImage(
                               fit: BoxFit.fill,
-                              image: new NetworkImage('$stringImageId')))),
+                              image: new NetworkImage(stringImageId!)))),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 15.0),
@@ -425,8 +426,9 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
               ),
               TextButton.icon(
                   onPressed: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => ActivityScreen()));
+                    //print(stringImageId!);
+                    getImage();
+                    //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ActivityScreen()));
                   },
                   // widget.listener
                   //     .getRouter()
@@ -589,7 +591,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
                     size: 35.0,
                   ),
                   label: Text(
-                    "Find People",
+                    "Find Peoples",
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
                   )),
             ],
@@ -698,7 +700,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
           "timestamp": DateTime.now().millisecondsSinceEpoch,
           "message": msg,
         };
-        FitcaribReference.child('posts')
+        fitcaribReference.child('posts')
             .child(sharedPreferences!.getString("userid") as String)
             .child(postKey)
             .set(data)
@@ -714,10 +716,13 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
     });
   }
 
-  uploadImageTextPost(var msg, var image) {
-    SharedPreferences.getInstance().then((SharedPreferences sp) async {
+  uploadImageTextPost(var msg, var image)
+  {
+    SharedPreferences.getInstance().then((SharedPreferences sp) async
+    {
       sharedPreferences = sp;
-      if (sharedPreferences!.getString("userid") != null) {
+      if (sharedPreferences!.getString("userid") != null)
+      {
         dynamic postKey = FirebaseDatabase.instance
             .reference()
             .child("posts")
@@ -738,7 +743,7 @@ abstract class BaseScreenState<T extends BaseScreen, P extends BasePresenter> ex
             "imageUrl": downloadUrl,
           };
 
-          FitcaribReference.child('posts')
+          fitcaribReference.child('posts')
               .child(sharedPreferences!.getString("userid") as String)
               .child(postKey)
               .set(data)

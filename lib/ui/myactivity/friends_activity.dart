@@ -15,8 +15,9 @@ class FriendsActivityScreen extends StatefulWidget {
   FriendsActivityScreenState createState() => FriendsActivityScreenState();
 }
 
-class FriendsActivityScreenState extends State<FriendsActivityScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKeyFriendsActivityScreen = new GlobalKey<ScaffoldState>();
+class FriendsActivityScreenState extends State<FriendsActivityScreen>
+{
+  final GlobalKey<ScaffoldState> _scaffoldKeyFriendsActivityScreen =  GlobalKey<ScaffoldState>();
   List<ActivityModel> myFriendPost = [];
   List<dynamic> myFriendData = [];
   final ref = FirebaseDatabase.instance.reference();
@@ -24,9 +25,7 @@ class FriendsActivityScreenState extends State<FriendsActivityScreen> {
   String? timeFooter;
 
   @override
-  void dispose(){
-    super.dispose();
-  }
+  void dispose(){super.dispose();}
 
   @override
   void initState() {
@@ -59,7 +58,8 @@ class FriendsActivityScreenState extends State<FriendsActivityScreen> {
     });
   }
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     var screenWidth = MediaQuery.of(context).size.width;
     return myFriendPost.length == 0
         ? Center(

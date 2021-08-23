@@ -1,11 +1,14 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:flutter/services.dart';
 import 'package:fitcarib/ui/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FindPeopleScreen extends StatefulWidget {
+class FindPeopleScreen extends StatefulWidget
+{
   FindPeopleScreen({Key? key,}) : super(key: key);
 
   @override
@@ -24,12 +27,11 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
 
   SharedPreferences? sharedPreferences;
 
-
+  String currentUserId=FirebaseAuth.instance.currentUser!.uid;
 
   List<String> litems = [];
-  Map<dynamic, dynamic>? allusers;
 
-
+  Map<dynamic, dynamic>? allusers={};
   Map foundUsers = Map();
   Map toRemoveUsers = Map();
 
@@ -104,7 +106,8 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
                                   ],
                                 ),
                               ),
-                              ElevatedButton.icon(onPressed: () {
+                              ElevatedButton.icon(onPressed: ()
+                              {
                                 sendToRequested(foundUsers.values.elementAt(index)["name"],foundUsers.values.elementAt(index)["profilePic"],foundUsers.keys.elementAt(index));
                               }, icon: Icon(Icons.add,size: 30.0,), label: Text("")),
 //                              Icon(Icons.add,size: 20.0,),
@@ -135,15 +138,17 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
     );
   }
 
-  void finalPeoples() {
+  void finalPeoples()
+  {
     setState(() {
       foundUsers = allusers!;
     });
   }
 
-  Future getallpeople(dynamic value1) async{
+  Future getallpeople(dynamic value1) async
+  {
     String name = "";
-    bool val = false;
+    //bool val = false;
     if(allusers != null){
       allusers!.forEach((k,v){
         name = v["name"];
@@ -161,7 +166,7 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic requested = FitcaribReference.child("requested").child(prefs.get("userid") as String);
     requested.once().then((DataSnapshot snapshot) async{
-      if(snapshot.value != null){
+      if(snapshot.value != null) {
         Map<dynamic,dynamic> requestedMap= snapshot.value;
         if(requestedMap != null){
           allusers!.removeWhere((dynamic k, dynamic v) => requestedMap.containsKey(k));
@@ -185,8 +190,8 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
     });
   }
 
-  Future friends(dynamic value1) async{
-
+  Future friends(dynamic value1) async
+  {
     SharedPreferences.getInstance().then((SharedPreferences sp){
       sharedPreferences = sp;
       if(sharedPreferences!.get("userid") != null){
@@ -194,7 +199,8 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
         friendship.once().then((DataSnapshot snapshot) async{
           if(snapshot.value != null){
             Map<dynamic,dynamic> friendsMap= snapshot.value;
-            if(friendsMap != null){
+            if(friendsMap != null)
+            {
               allusers!.removeWhere((dynamic k, dynamic v) => friendsMap.containsKey(k));
             }
           }
@@ -209,41 +215,56 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
   Future<void> getPeople(dynamic value1) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print("user id is ${prefs.get("userid")}");
-    if(foundUsers != null){
+    if(foundUsers != null)
       foundUsers.clear();
-    }
-    if(allusers != null){
-      allusers!.clear();
-    }
 
-    if(toRemoveUsers != null){
+    if(allusers != null)
+      allusers!.clear();
+
+    if(toRemoveUsers != null)
       toRemoveUsers.clear();
-    }
 
     dynamic users = FitcaribReference.child("users");
-    users.once().then((DataSnapshot snapshot) async{
-      if(snapshot.value == null){
+    users.once().then((DataSnapshot snapshot) async
+    {
+      if(snapshot.value == null)
+      {
         print("in if");
       }
-      else{
-        print("in else");
-        Map<dynamic, dynamic> usersMap = snapshot.value;
-        if(usersMap == null){
-          print("in child if");
-        }
-        else{
-          print("in child else");
-          allusers = usersMap;
-          allusers!.remove(prefs.get("userid"));
-          friends(value1);
+      else
+        {
+          print("in else");
+          Map<dynamic, dynamic> usersMap = snapshot.value;
+          if(usersMap == null)
+          {
+            print("in child if");
+          }
+          else{
+            print("in child else");
+            allusers = usersMap;
+            allusers!.remove(prefs.get("userid"));
+            friends(value1);
         }
       }
     });
   }
 
-  void sendToRequested(dynamic name,dynamic profilePic,dynamic id) async{
+  String reverse(String string)
+  {
+    if (string.length < 2)
+      return string;
+
+    final characters = Characters(string);
+    return characters.toList().reversed.join();
+  }
+
+  void sendToRequested(dynamic name,dynamic profilePic,dynamic id) async
+  {
+    var roomId;
+    var notificationId;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    Map<String,dynamic> data = <String,dynamic>{
+    Map<String,dynamic> data = <String,dynamic>
+    {
       "name": name,
       "profilePic": profilePic,
     };
@@ -252,13 +273,40 @@ class FindPeopleScreenState extends State<FindPeopleScreen>
       "name": prefs.get("name"),
       "profilePic": prefs.get("imageId"),
     };
+    //current user=kushal id=AAA lakshit id=ZZZ
+    if(currentUserId.compareTo(id) == 1)
+    {
+      roomId = currentUserId+id;
+      print(currentUserId+id);
 
-    FitcaribReference.child("requested").child(prefs.get("userid") as String).child(id).set(data).whenComplete((){
-      FitcaribReference.child("requests").child(id).child(prefs.get("userid") as String).set(data1).whenComplete((){
+      notificationId=roomId as String;
+      await FirebaseMessaging.instance.unsubscribeFromTopic(reverse(notificationId)).whenComplete(() async
+      {
+        await FirebaseMessaging.instance.subscribeToTopic(notificationId).whenComplete(() async { await saveNotificationIdToFirebase(notificationId as String?,id as String?);});
+      });
+    }
+    else if(currentUserId.compareTo(id) == -1)  //AAA compare ZZZ=-1
+    {
+      roomId = id+currentUserId;  //roomId=ZZZ AAA
+      print(id+currentUserId);
+
+      notificationId=roomId as String;  //notification to me on ZZZ AAA
+      await FirebaseMessaging.instance.subscribeToTopic(notificationId).whenComplete(() async { await saveNotificationIdToFirebase(notificationId as String?,id as String?);});
+    }
+
+    FitcaribReference.child("requested").child(prefs.get("userid") as String).child(id).set(data).whenComplete(()
+    {
+      FitcaribReference.child("requests").child(id).child(prefs.get("userid") as String).set(data1).whenComplete(()
+      {
         setState(() {
           foundUsers.remove(id);
         });
       });
     });
+  }
+  Future<void >saveNotificationIdToFirebase(String? notificationId,String? id) async
+  {
+    Map<dynamic,dynamic> keyMap={"notificationKeyOfUser": notificationId };
+    await FitcaribReference.child('notifications').child(id!).child(currentUserId).set(keyMap);
   }
 }

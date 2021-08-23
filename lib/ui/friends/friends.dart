@@ -1,28 +1,32 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitcarib/ui/common/common.dart';
 import 'package:fitcarib/ui/chats/chats.dart';
 
-class FriendsScreen extends StatefulWidget{
-  FriendsScreen({Key? key,})
-      : super(
-    key: key,
-  );
+class FriendsScreen extends StatefulWidget
+{
+  FriendsScreen({Key? key}) : super(key: key,);
+
   @override
   FriendsScreenState createState() => FriendsScreenState();
 }
 
-class FriendsScreenState extends State<FriendsScreen> {
+class FriendsScreenState extends State<FriendsScreen>
+{
   final GlobalKey<ScaffoldState> _scaffoldKeyFriendsScreen = new GlobalKey<ScaffoldState>();
 
-  final FitcaribReference = FirebaseDatabase.instance.reference();
+  final fitcaribReference = FirebaseDatabase.instance.reference();
 
   SharedPreferences? sharedPreferences;
 
   Map<dynamic,dynamic>? val;
 
   var loggedInUserId;
+
+  String currentUserId=FirebaseAuth.instance.currentUser!.uid;
 
   Map<dynamic,dynamic>? requestMap;
   Map<dynamic,dynamic>? friendsMap;
@@ -79,7 +83,8 @@ class FriendsScreenState extends State<FriendsScreen> {
               ),
 
               Expanded(
-                child: TabBarView(children: [
+                child: TabBarView(
+                    children: [
                   friendsMap == null? Center(child: Text("No friends!"),): ListView.builder(
                     itemCount: friendsMap!.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -111,11 +116,13 @@ class FriendsScreenState extends State<FriendsScreen> {
                                 ),
                               ),
                               IconButton(icon: Icon(Icons.message),
-                                  onPressed: (){
-                                toChat(friendsMap!.keys.elementAt(index), friendsMap!.values.elementAt(index));
+                                  onPressed: ()
+                                  {
+                                  toChat(friendsMap!.keys.elementAt(index), friendsMap!.values.elementAt(index));
 //                                presenter.toChat(friendsMap.values.elementAt(index)["name"],friendsMap.keys.elementAt(index),friendsMap.values.elementAt(index)["profilePic"]);
 //                                print(friendsMap.values.elementAt(index).toString());
-                              })
+                                  }
+                              )
                             ],
                           ),
                           ),
@@ -158,28 +165,29 @@ class FriendsScreenState extends State<FriendsScreen> {
                                 Material(
                                   shape: CircleBorder(),
                                   child: Ink.image(
-                                    image: AssetImage('assets/images/trueicon.png'),
+                                    image: AssetImage('assets/images/trueIcon.png'),
                                     fit: BoxFit.cover,
-                                    width: 20.0,
-                                    height: 20.0,
+                                    width: 25.0,
+                                    height: 25.0,
                                     child: InkWell(
-                                      onTap: (){
-                                        AcceptRequest(requestMap!.keys.elementAt(index), requestMap!.values.elementAt(index)["profilePic"], requestMap!.values.elementAt(index)["name"]);
+                                      onTap: ()
+                                      {
+                                        acceptRequest(requestMap!.keys.elementAt(index), requestMap!.values.elementAt(index)["profilePic"], requestMap!.values.elementAt(index)["name"]);
                                       },
                                       child: null,
                                     ),
                                   ),
                                 ),
-                                Padding(padding: EdgeInsets.only(left: 10.0),),
+                                Padding(padding: EdgeInsets.only(left: 15.0),),
                                 Material(
                                   shape: CircleBorder(),
                                   child: Ink.image(
-                                    image: AssetImage('assets/images/falseicon.png'),
+                                    image: AssetImage('assets/images/falseIcon.png'),
                                     fit: BoxFit.cover,
-                                    width: 20.0,
-                                    height: 20.0,
+                                    width: 25.0,
+                                    height: 25.0,
                                     child: InkWell(
-                                      onTap: null,
+                                      onTap: ()=>rejectRequest(requestMap!.keys.elementAt(index)),
                                       child: null,
                                     ),
                                   ),
@@ -202,34 +210,87 @@ class FriendsScreenState extends State<FriendsScreen> {
     );
   }
 
-  void AcceptRequest(dynamic key, dynamic profilePic, dynamic name){
+  Future<void> rejectRequest(dynamic keyToBeRemoved) async
+  {
+    await fitcaribReference.child('requests').child(currentUserId).child(keyToBeRemoved).remove().then((_) async
+    {
+      await fitcaribReference.child("requested").child(keyToBeRemoved).child(currentUserId).remove().then((_) async
+      {
+        await fitcaribReference.child('requests').child(currentUserId).once().then((snapshot)
+        {
+          if(snapshot.value!=null)
+          {
+            setState(() {
+              requestMap=snapshot.value;
+            });
+          }
+          else
+            setState(() {requestMap=null;});
+        }).then((_) async {await fitcaribReference.child("notifications").child(keyToBeRemoved).child(currentUserId).remove();});
+      });
+    });
+  }
 
-    setState(() {
+  void acceptRequest(dynamic key, dynamic profilePic, dynamic name) async
+  {
+    var roomId;
+    var notificationId;
+    setState(()
+    {
       requestMap!.remove(key);
     });
 
-    Map<String,dynamic> data = <String,dynamic>{
+    Map<String,dynamic> data = <String,dynamic>
+    {
       "name": name,
       "profilePic": profilePic,
     };
 
+    //current user lakshit id=ZZZ kushal id=AAA
+    if(currentUserId.compareTo(key) == 1)  // ZZZ compareTo AAA=+1
+    {
+      roomId = currentUserId+key;  //roomId= ZZZ AAA
+      print(currentUserId+key);
 
-    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      notificationId=roomId as String;
+      await FirebaseMessaging.instance.unsubscribeFromTopic(notificationId).whenComplete(() async
+      {
+        await FirebaseMessaging.instance.subscribeToTopic(reverse(notificationId)).whenComplete(() async {await saveNotificationIdToFirebase(reverse(notificationId),key);});  //notification id=AAA ZZZ.
+      });
+    }
+    else if(currentUserId.compareTo(key) == -1)
+    {
+      roomId = key+currentUserId;
+      print(key+currentUserId);
+
+      notificationId=roomId as String;
+      await FirebaseMessaging.instance.subscribeToTopic(reverse(notificationId)).whenComplete(() async {await saveNotificationIdToFirebase(reverse(notificationId),key);});  //notification id=AAA ZZZ.
+    }
+
+
+    SharedPreferences.getInstance().then((SharedPreferences sp)
+    {
       sharedPreferences = sp;
       FirebaseDatabase.instance.reference().child("friendships").child(sharedPreferences!.getString("userid") as String).child(key).set(data).whenComplete((){
 
-        Map<String,dynamic> data1 = <String,dynamic>{
+        Map<String,dynamic> data1 = <String,dynamic>
+        {
+
           "name": sharedPreferences!.getString("name"),
           "profilePic": sharedPreferences!.getString("imageId"),
         };
 
         FirebaseDatabase.instance.reference().child("friendships").child(key).child(sharedPreferences!.getString("userid") as String).set(data1);
         FirebaseDatabase.instance.reference().child("requested").child(key).child(sharedPreferences!.getString("userid") as String).remove();
-        FirebaseDatabase.instance.reference().child("requests").child(sharedPreferences!.getString("userid") as String).child(key).remove().whenComplete((){
+        FirebaseDatabase.instance.reference().child("requests").child(sharedPreferences!.getString("userid") as String).child(key).remove().whenComplete(()
+        {
           dynamic friends =  FirebaseDatabase.instance.reference().child("friendships").child(sharedPreferences!.getString("userid") as String);
-          friends.once().then((DataSnapshot snapshot){
-            if(snapshot.value != null){
-              setState(() {
+          friends.once().then((DataSnapshot snapshot)
+          {
+            if(snapshot.value != null)
+            {
+              setState(()
+              {
                 friendsMap = snapshot.value;
               });
             }
@@ -239,8 +300,23 @@ class FriendsScreenState extends State<FriendsScreen> {
     });
   }
 
-  void toChat(var id, var value){
+  Future<void >saveNotificationIdToFirebase(String? notificationId,String? id) async
+  {
+    Map<dynamic,dynamic> keyMap={"notificationKeyOfUser": notificationId };
+    await fitcaribReference.child('notifications').child(id!).child(currentUserId).set(keyMap);
+  }
 
+  String reverse(String string)
+  {
+    if (string.length < 2)
+      return string;
+
+    final characters = Characters(string);
+    return characters.toList().reversed.join();
+  }
+
+  Future<void> toChat(var id, var value) async
+  {
     Map<dynamic,dynamic> senderUserDetails = Map();
     Map<dynamic,dynamic> receiverUserDetails = Map();
     var roomId;
@@ -252,68 +328,49 @@ class FriendsScreenState extends State<FriendsScreen> {
     senderUserDetails["profilePic"] = sharedPreferences!.getString("imageId");
     senderUserDetails["name"] = sharedPreferences!.getString("name");
 
-//    print(senderUserDetails.toString());
+    //    print(senderUserDetails.toString());
 
-    if(loggedInUserId.compareTo(id) == 1){
+    if(loggedInUserId.compareTo(id) == 1)  // abc compare def =+1
+    {
       roomId = loggedInUserId+id;
-//      print(loggedInUserId+id);
+      print(loggedInUserId+id);
+
     }
-    else if(loggedInUserId.compareTo(id) == -1){
+    else if(loggedInUserId.compareTo(id) == -1)
+    {
       roomId = id+loggedInUserId;
-//      print(id+loggedInUserId);
+      print(id+loggedInUserId);
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ChatsScreen(
-            roomId: roomId,
-            receiverUserDetails: receiverUserDetails,
-            senderUserDetails: senderUserDetails,
-          )),
-    );
-
-//  String s1 = id;
-//  String s2 = loggedInUserId;
-//
-
-
-//  loggedInUserId.compareTo(id);
-
-//    print(loggedInUserId.compareTo(id).toString());
-//    print(s2);
-
-//    if(loggedInUserId.hashCode > id.hashCode){
-//      print("if" + loggedInUserId+id);
-//    }
-//    else{
-//      print("else"+id+loggedInUserId);
-//    }
-
-//    FirebaseDatabase.instance.reference().child("friendships")
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen(roomId: roomId, receiverUserDetails: receiverUserDetails, senderUserDetails: senderUserDetails)));
   }
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
-    SharedPreferences.getInstance().then((SharedPreferences sp){
+    SharedPreferences.getInstance().then((SharedPreferences sp)
+    {
       sharedPreferences = sp;
       loggedInUserId = sharedPreferences!.getString("userid");
-      if(loggedInUserId != null){
+      if(loggedInUserId != null)
+      {
         dynamic friend = FirebaseDatabase.instance.reference().child("friendships").child(loggedInUserId);
-        friend.once().then((DataSnapshot snapshot) {
-          if(snapshot.value != null){
+        friend.once().then((DataSnapshot snapshot)
+        {
+          if(snapshot.value != null)
+          {
             setState(() {
               friendsMap = snapshot.value;
             });
           }
         });
         dynamic request =  FirebaseDatabase.instance.reference().child("requests").child(loggedInUserId);
-        request.once().then((DataSnapshot snapshot){
-          if(snapshot.value != null){
-            setState(() {
-              requestMap = snapshot.value;
-            });
+        request.once().then((DataSnapshot snapshot)
+        {
+          if(snapshot.value != null)
+          {
+            setState(() {requestMap = snapshot.value;});
           }
         });
       }

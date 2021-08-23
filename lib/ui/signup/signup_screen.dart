@@ -6,6 +6,7 @@ import 'package:fitcarib/base/ui/base_screen.dart';
 import 'package:fitcarib/ui/signup/signup_presenter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 class SignUpScreen extends BaseScreen {
@@ -193,10 +194,13 @@ class _SignUpScreenState extends BaseScreenState<SignUpScreen, SignUpPresenter> 
     return SignUpPresenter(this);
   }
 
-  Future getImage() async {
-    var tempImage = await FilePicker.platform.pickFiles(type: FileType.image) as File;
+  Future getImage() async
+  {
+    final ImagePicker _picker=ImagePicker();
+    var imageXFile=await _picker.pickImage(source: ImageSource.gallery);
+    //var tempImage = await FilePicker.platform.pickFiles(type: FileType.image);
     setState(() {
-      file = tempImage;
+      file = File(imageXFile!.path);
     });
   }
 

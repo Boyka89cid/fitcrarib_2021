@@ -1,21 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/gestures.dart';
 import 'package:fitcarib/ui/signin/sign_in.dart';
 import 'package:fitcarib/ui/signup/sign_up.dart';
 //import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:http/http.dart' as http;
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends StatefulWidget
+{
   @override
   WelcomeScreenState createState() => WelcomeScreenState();
 }
 
-class WelcomeScreenState extends State<WelcomeScreen> {
-  final FitcaribReference = FirebaseDatabase.instance.reference().child('users');
+class WelcomeScreenState extends State<WelcomeScreen>
+{
+  final fitcaribReference = FirebaseDatabase.instance.reference().child('users');
 
-  FirebaseAuth? _firebaseAuth;
+  //FirebaseAuth? _firebaseAuth;
 
   /*void _signinfb()async{
     //FacebookLogin facebookLogin = FacebookLogin();
@@ -175,7 +173,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
-class ClippingClass extends CustomClipper<Path> {
+class ClippingClass extends CustomClipper<Path>
+{
   ClippingClass(this.context);
   final context;
   @override

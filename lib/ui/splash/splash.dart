@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:fitcarib/ui/myactivity/activity.dart';
 import 'package:fitcarib/ui/welcome/welcome.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatefulWidget
+{
   @override
   SplashScreenState createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen> {
-
+class SplashScreenState extends State<SplashScreen>
+{
   SharedPreferences? sharedPreferences;
   List<dynamic> vehicleList = [];
   var name;
   var imageId;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     return Scaffold(
       body: Stack(
         children: [
@@ -38,7 +39,8 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     timer();
   }
@@ -46,20 +48,20 @@ class SplashScreenState extends State<SplashScreen> {
 
   void timer()
   {
-    SharedPreferences.getInstance().then((sp) {
+    SharedPreferences.getInstance().then((sp)
+    {
       sharedPreferences = sp;
 
         name = sharedPreferences!.getString("name");
         imageId = sharedPreferences!.get("imageId");
 
     });
-    Timer(Duration(seconds: 2),(){
-      if(name == null || imageId == null){
-        Navigator.push(context,MaterialPageRoute(builder: (context) => WelcomeScreen()),);
-      }
-      else{
-        Navigator.push(context,MaterialPageRoute(builder: (context) => ActivityScreen()),);
-      }
+    Timer(Duration(seconds: 2),()
+    {
+      if(name == null || imageId == null)
+        Navigator.push(context,MaterialPageRoute(builder: (context) => WelcomeScreen()));
+      else
+        Navigator.push(context,MaterialPageRoute(builder: (context) => ActivityScreen()));
     });
   }
 

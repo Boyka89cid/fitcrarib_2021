@@ -30,7 +30,7 @@ class FavoritesActivityScreenState extends State<FavoritesActivityScreen> {
     SharedPreferences.getInstance().then((SharedPreferences sp)
     {
       sharedPreferences = sp;
-      if (sharedPreferences!.getString("userid") != null) {
+      if (sharedPreferences.getString("userid") != null) {
         dynamic favorites = FirebaseDatabase.instance
             .reference()
             .child("favorites")

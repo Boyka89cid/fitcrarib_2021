@@ -14,13 +14,11 @@ import 'package:fitcarib/ui/findpeople/find_people.dart';
 import 'package:fitcarib/ui/profile/profile.dart';
 //import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fitcarib/ui/welcome/welcome.dart';
-
 class CommonDrawer extends StatefulWidget
 {
   @override
   DrawerState createState() => new DrawerState();
 }
-
 class DrawerState extends State<CommonDrawer>
 {
   SharedPreferences? sharedPreferences;
@@ -28,10 +26,8 @@ class DrawerState extends State<CommonDrawer>
   var name;
   var imageId;
   var userName;
-  final FirebaseAuth _fAuth = FirebaseAuth.instance;
-
+  //final FirebaseAuth _fAuth = FirebaseAuth.instance;
   List<dynamic> data1 =[];
-
   @override
   void initState() {
     super.initState();
@@ -44,7 +40,6 @@ class DrawerState extends State<CommonDrawer>
       });
     });
   }
-
   @override
   Widget build(BuildContext context)
   {
@@ -115,10 +110,10 @@ class DrawerState extends State<CommonDrawer>
               ),
               TextButton.icon(
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ActivityScreen()),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ActivityScreen()),
+                  ),
                   icon: Icon(
                     Icons.note,
                     color: Colors.white,
@@ -140,10 +135,10 @@ class DrawerState extends State<CommonDrawer>
               ),
               TextButton.icon(
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileScreen()),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfileScreen()),
+                  ),
                   icon: Icon(
                     Icons.person,
                     color: Colors.white,
@@ -165,10 +160,10 @@ class DrawerState extends State<CommonDrawer>
               ),
               TextButton.icon(
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NotificationsScreen()),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NotificationsScreen()),
+                  ),
                   icon: Icon(
                     Icons.notifications,
                     color: Colors.white,
@@ -201,18 +196,18 @@ class DrawerState extends State<CommonDrawer>
               ),
               TextButton.icon(
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MessageScreen()),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MessageScreen()),
+                  ),
                   icon: Icon(
                     Icons.message,
                     color: Colors.white,
                     size: 35.0,
                   ),
                   label: Text(
-                    "Messages",
-                    style: TextStyle(color: Colors.white, fontSize: 20.0))
+                      "Messages",
+                      style: TextStyle(color: Colors.white, fontSize: 20.0))
               ),
               Padding(
                 padding: EdgeInsets.only(left: screenWidth / 18),
@@ -237,10 +232,10 @@ class DrawerState extends State<CommonDrawer>
               ),
               TextButton.icon(
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FriendsScreen()),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FriendsScreen()),
+                  ),
                   icon: Icon(
                     Icons.people,
                     color: Colors.white,
@@ -262,10 +257,10 @@ class DrawerState extends State<CommonDrawer>
               ),
               TextButton.icon(
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FindPeopleScreen()),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FindPeopleScreen()),
+                  ),
                   icon: Icon(
                     Icons.search,
                     color: Colors.white,
@@ -289,8 +284,8 @@ class DrawerState extends State<CommonDrawer>
               TextButton.icon(
                   onPressed: ()
                   {
-                    BaseListener? listner;
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => GroupsScreen("title", listner)));
+                    BaseListener? listener;
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => GroupsScreen("title",listener)));
                   },
                   //  onPressed: () => widget.listener
                   //      .getRouter()
@@ -315,10 +310,10 @@ class DrawerState extends State<CommonDrawer>
               ),
               TextButton.icon(
                   onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsScreen()),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingsScreen()),
+                  ),
                   icon: Icon(
                     Icons.settings,
                     color: Colors.white,
@@ -339,9 +334,10 @@ class DrawerState extends State<CommonDrawer>
                 padding: EdgeInsets.only(left: 20.0),
               ),
               TextButton.icon(
-                  onPressed: ()
+                  onPressed: () async
                   {
-                      sharedPreferences!.clear().then((_) {Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));});
+                    signOut();
+                    sharedPreferences!.clear().then((_) {Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));});
                   },
                   icon: Icon(
                     Icons.exit_to_app,
@@ -361,35 +357,34 @@ class DrawerState extends State<CommonDrawer>
       ),
     );
   }
-
-  Future _showAlert(BuildContext context, String message) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
-          title: Center(
-              child: Text(
-            message,
-            style: TextStyle(fontWeight: FontWeight.bold))
-          ),
-          actions: <Widget>[
-            Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () {Navigator.pop(context);},
-                  child: Text("OK", style: TextStyle(color: Color(0xFF0076B5), fontWeight: FontWeight.w900, fontSize: 15))
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /*Future signOut() async
+  // Future _showAlert(BuildContext context, String message) async {
+  //
+  //   return showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         shape:
+  //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
+  //         title: Center(
+  //             child: Text(
+  //                 message,
+  //                 style: TextStyle(fontWeight: FontWeight.bold))
+  //         ),
+  //         actions: <Widget>[
+  //           Row(
+  //             children: <Widget>[
+  //               TextButton(
+  //                   onPressed: () {Navigator.pop(context);},
+  //                   child: Text("OK", style: TextStyle(color: Color(0xFF0076B5), fontWeight: FontWeight.w900, fontSize: 15))
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+/*Future signOut() async
   {
     var facebookLogin = FacebookLogin();
     var data = _fAuth.currentUser;
@@ -397,7 +392,8 @@ class DrawerState extends State<CommonDrawer>
     {
       facebookLogin.logOut();
       _fAuth.signOut();
-      print("signedout");
+      print("signed out");
     }
   }*/
 }
+Future<void> signOut()async {await FirebaseAuth.instance.signOut();}

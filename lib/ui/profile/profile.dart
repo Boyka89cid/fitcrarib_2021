@@ -57,7 +57,7 @@ class ProfileScreenState extends State<ProfileScreen>
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context)=>EditProfile()));},
+              onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context)=>EditProfile(firstName,lastName,username,stringImageId)));},
               child: Container(
                 padding: EdgeInsets.only(right: 0.0, left: 24.0),
                 child: Text(
@@ -253,7 +253,7 @@ class ProfileScreenState extends State<ProfileScreen>
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 5.0, left: 30.0),
+              padding: EdgeInsets.only(top: 5.0, left: 30.0,),
               child: Text(
                 "$lastName",
                 style: TextStyle(color: Colors.black, fontSize: 20.0),

@@ -64,7 +64,7 @@ abstract class BasePresenter {
       if (res is ErrorResponse)
         view!.onError(res.message ?? "Some Error has occurred");
       else if (res is String)
-        view!.onError(res ?? "Some Error has occurred");
+        view!.onError("Some Error has occurred");
       else
         view!.onError("Some Error has occurred");
     } else
